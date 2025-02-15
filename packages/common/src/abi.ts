@@ -316,12 +316,12 @@ export const CrowdFundingABI=[
 	},
 	{
 		"inputs": [],
-		"name": "fundingGoal",
+		"name": "fundingApproved",
 		"outputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "bool",
 				"name": "",
-				"type": "uint256"
+				"type": "bool"
 			}
 		],
 		"stateMutability": "view",
@@ -329,12 +329,12 @@ export const CrowdFundingABI=[
 	},
 	{
 		"inputs": [],
-		"name": "fundingSuccessful",
+		"name": "fundingGoal",
 		"outputs": [
 			{
-				"internalType": "bool",
+				"internalType": "uint256",
 				"name": "",
-				"type": "bool"
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -381,12 +381,12 @@ export const CrowdFundingABI=[
 	},
 	{
 		"inputs": [],
-		"name": "votingCompleted",
+		"name": "votingStatus",
 		"outputs": [
 			{
-				"internalType": "bool",
+				"internalType": "enum CrowdFunding.VotingStatus",
 				"name": "",
-				"type": "bool"
+				"type": "uint8"
 			}
 		],
 		"stateMutability": "view",

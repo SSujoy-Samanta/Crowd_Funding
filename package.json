@@ -1,5 +1,5 @@
 {
-  "name": "CFAPP",
+  "name": "@repo/cfapp",
   "private": true,
   "scripts": {
     "build": "turbo build",

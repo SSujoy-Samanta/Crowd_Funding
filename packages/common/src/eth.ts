@@ -1,0 +1,1 @@
+export const ETH_DECIMAL: bigint = 1000000000000000000n;

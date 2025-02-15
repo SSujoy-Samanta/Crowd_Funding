@@ -4,7 +4,7 @@ import { useWriteContract } from "wagmi";
 import { parseEther } from "viem";
 import { CrowdfundingFactoryABI } from "@repo/common/ABI";
 
-export const CreateContract = () => {
+export const CreateCampaign = () => {
     const {data: hash, writeContract } = useWriteContract();
     const convertEthToWei = (ethAmount: string) => parseEther(ethAmount);
 
