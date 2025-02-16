@@ -1,8 +1,9 @@
 'use client';
 
+import { ETH_DECIMAL } from "@/utils/wei";
 import { CrowdFundingABI } from "@repo/common/ABI";
 import { useReadContract } from "wagmi";
-import { ETH_DECIMAL } from "../utils/wei";
+
 
 export const CampaignGoal = () => {
     const { data, isLoading, error } = useReadContract({

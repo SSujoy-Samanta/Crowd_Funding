@@ -1,5 +1,5 @@
 {
-  "name": "@repo/common",
+  "name": "@repo/db",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,13 +7,12 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "exports": {
-    "./ABI": "./src/abi.ts",
-    "./zod":"./src/zod.ts"
+    "./db": "./src/index.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "zod": "^3.24.2"
+    "@prisma/client": "^6.3.1"
   }
 }

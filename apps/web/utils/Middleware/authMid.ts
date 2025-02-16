@@ -1,0 +1,33 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
+
+
+export const AuthMiddleware = async (
+  req: NextRequest,
+): Promise<NextResponse> => {
+    const token = await getToken({
+        req: req,
+        secret: process.env.NEXTAUTH_SECRET,
+    });
+
+    if (!token) {
+        return NextResponse.redirect(new URL("/signin", req.url));
+    }
+
+    return NextResponse.next();
+};
+
+export const PostSignInMiddleware = async (
+  req: NextRequest,
+): Promise<NextResponse> => {
+    const token = await getToken({
+        req: req,
+        secret: process.env.NEXTAUTH_SECRET,
+    });
+
+    if (token) {
+        return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
+
+    return NextResponse.next();
+};
