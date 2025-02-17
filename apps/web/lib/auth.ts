@@ -91,7 +91,7 @@ export const NEXT_AUTH={
                     if (!existUser) {
                         const salt = await bcrypt.genSalt(10);
                         // Ensure process.env.SECRET_USER_PASS is defined and not undefined or null
-                        if (!process.env.SECRET_USER_PASS) {
+                        if (!process.env.SECRET_USER_PASS || !process.env.DEFAULT_OTP) {
                             throw new Error(
                                 "SECRET_USER_PASS is not defined in the environment variables",
                             );
@@ -100,13 +100,23 @@ export const NEXT_AUTH={
                             process.env.SECRET_USER_PASS,
                             salt,
                         );
+                        const hashedOTP = await bcrypt.hash(process.env.DEFAULT_OTP, salt);
                         const newUser = await db.user.create({
                             data: {
                                 username:name,
                                 email,
                                 password: hashPassword,
+                                verified:true
                             },
                         });
+                        await db.verifyEmail.create({
+                            data:{
+                                OTP:hashedOTP,
+                                email,
+                                verified:true,
+                                expired: new Date()
+                            }
+                        })
                         user.id = newUser.id.toString();
                         return true;
                     }

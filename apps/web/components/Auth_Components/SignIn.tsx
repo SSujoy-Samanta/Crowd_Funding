@@ -3,20 +3,29 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import InputWithIcon from "../Inputs/InputWithSvg";
-import { Key, Mail } from "../SVG/svg";
-import GoogleSVG from "../SVG/Google";
-import GitHubSVG from "../SVG/Github";
-
+import { useSetRecoilState } from "recoil";
+import { notificationState } from "@/lib/atom";
+import { IoMail } from "react-icons/io5";
+import { RiLockPasswordFill } from "react-icons/ri";
+import { FcGoogle } from "react-icons/fc";
+import { FaGithub } from "react-icons/fa";
 export const SignIn = () => {
     const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+    const setNotification=useSetRecoilState(notificationState);
 
     const handleSignIn = async () => {
         if (!email.trim() || !password) {
-            setError("Email and password are required.");
+            if (!email.trim()) {
+                setError("Please enter your email.");
+            }else if (!password) {
+                setError("Please enter your password.");
+            }else{
+                setError("Email and password are required.");
+            }
             return;
         }
 
@@ -34,6 +43,7 @@ export const SignIn = () => {
                 setError(res.error);
                 if (res.status === 401) {
                     setError('Invalid Credentials, try again!');
+                    setNotification({ msg: "Invalid Credentials, try again!", type: "error" });
                 } else if (res.status === 400) {
                     setError('Missing Credentials!');
                 } else if (res.status === 404) {
@@ -44,6 +54,7 @@ export const SignIn = () => {
                     setError('oops something went wrong..!');
                 }
             } else {
+                setNotification({ msg: "Log in successfull", type: "success" });
                 router.push("/dashboard"); // Redirect only on success
             }
         } catch (error: any) {
@@ -52,19 +63,20 @@ export const SignIn = () => {
             setLoading(false);
         }
     };
+    
 
     return (
         <div className="flex flex-col gap-2 items-center justify-center xl:w-1/5 rounded-md p-4 bg-gradient-to-b from-slate-700 via-slate-800 via-80% to-slate-800 mb-10 md:w-3/6 sm:w-3/5 shadow-xl shadow-slate-600">
             <div className="flex justify-center items-center flex-col gap-1">
-                <span className="lg:text-2xl md:text-xl xxs:text-lg bg-gradient-to-b from-cyan-200 to-cyan-700 bg-white bg-clip-text pr-1 font-black tracking-tighter text-transparent">
+                <span className="lg:text-2xl md:text-xl xxs:text-lg bg-gradient-to-b from-green-400 to-cyan-500 bg-white bg-clip-text pr-1 font-black tracking-tighter text-transparent">
                     Welcome Back
                 </span>
                 <span className="text-gray-400 italic">Login to your account</span>
             </div>
 
             <div className="flex flex-col gap-2 pt-4 w-full">
-                <InputWithIcon Icon={<Mail />} placeholder="name@gmail.com" setInput={setEmail} input={email} />
-                <InputWithIcon Icon={<Key />} placeholder="password" setInput={setPassword} input={password} type="password" />
+                <InputWithIcon Icon={<IoMail size={20}/>} placeholder="name@gmail.com" setInput={setEmail} input={email} name="email"/>
+                <InputWithIcon Icon={<RiLockPasswordFill size={20}/>} placeholder="password" setInput={setPassword} input={password} type="password" name="password"/>
                 
                 {error && <div className="text-red-500 text-sm">{error}</div>}
 
@@ -83,7 +95,7 @@ export const SignIn = () => {
                     className="flex justify-center items-center w-3/6 h-12 bg-white rounded-md cursor-pointer hover:bg-gray-300 transition-all duration-500 ease-in-out active:scale-95"
                     onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
                 >
-                    <GoogleSVG />
+                    <FcGoogle size={30}/>
                 </div>
 
                 {/* GitHub Login */}
@@ -91,7 +103,7 @@ export const SignIn = () => {
                     className="w-3/6 h-12 flex items-center justify-center gap-3 font-bold text-white bg-gray-900 border border-gray-700 rounded-md cursor-pointer transition-all duration-300 ease-in-out hover:bg-gray-800 hover:shadow-lg active:scale-95"
                     onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
                 >
-                    <GitHubSVG />
+                    <FaGithub size={30}/>
                 </div>
             </div>
 

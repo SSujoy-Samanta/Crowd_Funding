@@ -4,7 +4,6 @@ import styles from "./page.module.css";
 import { Interaction } from "../components/Interaction";
 import { CreateCampaign} from "../components/CreateCampaign";
 import { Account } from "../components/Account";
-import { WalletOptions } from "../components/WalletOptions";
 import { GetDeployedContracts } from "../components/GetDepolyedContracts";
 import { CreatorCampaign } from "../components/CreatorCampaign";
 import { CampaignGoal } from "../components/CampaignGoal";
@@ -35,8 +34,6 @@ const ThemeImage = (props: Props) => {
 export default function Home() {
   return (
     <div className="text-red-500  md:text-blue-500 sm:text-amber-200">
-      hiii
-      <WalletOptions/>
       <Account/>
       <Interaction/>
       <CreateCampaign/>

@@ -10,7 +10,7 @@ export default async function SigIN() {
   }
   return (
     <div
-      className="flex justify-center items-center w-full h-screen">
+      className="flex justify-center items-center w-full mt-10">
       <SignIn />
     </div>
   );

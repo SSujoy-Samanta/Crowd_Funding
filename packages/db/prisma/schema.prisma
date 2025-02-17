@@ -18,5 +18,32 @@ model User{
   username  String 
   email     String  @unique
   password  String
-  verified  Boolean @default(false)
+  verified     Boolean     @default(false)
+  otp       Otp?
+  address   Address?
+}
+model Otp {
+  id        Int      @id @default(autoincrement())
+  OTP       String
+  created   DateTime @default(now())
+  expired   DateTime
+  userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id])
+}
+model  Address{
+  id        Int      @id @default(autoincrement())
+  country   String
+  mobile    String?
+  state     String?
+  city      String?
+  userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id])
+}
+model VerifyEmail{
+  id        Int      @id  @default(autoincrement())
+  OTP       String      
+  email     String
+  verified  Boolean       @default(false)
+  created   DateTime      @default(now())
+  expired   DateTime
 }
