@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import InputWithIcon from "../Inputs/InputWithSvg";
@@ -13,6 +13,8 @@ import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { GiWorld } from "react-icons/gi";
 import axios from "axios";
+import { OTPPopUP } from "./OtpValidator";
+import Button from "../Buttons/buttons";
 
 export const SignUp = () => {
     const router = useRouter();
@@ -23,10 +25,39 @@ export const SignUp = () => {
     const [confirmPassword, setConfirmPassword] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+    const[otpSent,setOtpSend]=useState<boolean>(false);
     const setNotification=useSetRecoilState(notificationState);
+    const [verified,setVerified]=useState<boolean>(false);
+
+
+    async function sendOtp() {
+        try {
+            const response=await axios.post('/api/otp/send',{
+                email,
+                exist:false
+            })
+            if (response.data.otp) {
+                setNotification({ msg: response.data.msg, type: "success" });
+                setOtpSend(true);
+            }
+        }catch (e:any) {
+            if(e.response?.data?.errors){
+                setNotification({
+                    msg:e.response?.data?.errors[0]?.message ,
+                    type: "error",
+                });
+            }else{
+                setNotification({
+                    msg:e.response?.data?.msg,
+                    type: "error",
+                });
+            }
+       }
+    }
 
     const handleSignUp = async () => {
-        if (!email.trim() || !password || !username || !confirmPassword) {
+
+        if (!email.trim() || !password || !username || !confirmPassword || !verified) {
             if (!username) {
                 setError("Please enter your username.");
             } else if (!email.trim()) {
@@ -35,6 +66,8 @@ export const SignUp = () => {
                 setError("Please enter your password.");
             } else if (!confirmPassword) {
                 setError("Please confirm your password.");
+            }else if (!verified) {
+                setError("Please verify your email first.");
             }else{
                 setError("Credentials required.");
             }
@@ -45,36 +78,58 @@ export const SignUp = () => {
         }    
         setLoading(true);
         setError(null); // Clear previous errors
-
         try {
-            //const user=await axios.post('/api/signup')
-            const res = await signIn("credentials", {
-                redirect: false, // Prevent auto-redirect for error handling
-                email: email.trim(),
+            const response=await axios.post('/api/registration',{
+                username,
+                email,
                 password,
-        
-            });
-
-            if (res?.error) {
-                setError(res.error);
-                if (res.status === 401) {
-                    setError('Invalid Credentials, try again!');
-                    setNotification({ msg: "Invalid Credentials, try again!", type: "error" });
-                } else if (res.status === 400) {
-                    setError('Missing Credentials!');
-                } else if (res.status === 404) {
-                    setError('Account not found!');
-                } else if (res.status === 403) {
-                    setError('Forbidden!');
+                country,
+            })
+            if(!response.data.signup){
+                setNotification({ msg: response.data.msg , type: "error" });
+            }else{
+                const res = await signIn("credentials", {
+                    redirect: false, // Prevent auto-redirect for error handling
+                    email: email.trim(),
+                    password,
+                });
+    
+                if (res?.error) {
+                    setError(res.error);
+                    if (res.status === 401) {
+                        setError('Invalid Credentials, try again!');
+                        setNotification({ msg: "Invalid Credentials, try again!", type: "error" });
+                    } else if (res.status === 400) {
+                        setError('Missing Credentials!');
+                    } else if (res.status === 404) {
+                        setError('Account not found!');
+                    } else if (res.status === 403) {
+                        setError('Forbidden!');
+                    } else {
+                        setError('oops something went wrong..!');
+                    }
                 } else {
-                    setError('oops something went wrong..!');
+                    router.push("/dashboard");
+                    setNotification({ msg: response.data.msg , type: "success" });
+                   
                 }
-            } else {
-                setNotification({ msg: "Log in successfull", type: "success" });
-                router.push("/dashboard"); // Redirect only on success
+                
             }
-        } catch (error: any) {
+            
+        } catch (e: any) {
             setError("Something went wrong. Please try again.");
+            if(e.response?.data?.errors){
+                setNotification({
+                    msg:e.response?.data?.errors[0]?.message ,
+                    type: "error",
+                });
+            }else{
+                setNotification({
+                    msg:e.response?.data?.msg,
+                    type: "error",
+                });
+            }
+            
         } finally {
             setLoading(false);
         }
@@ -91,26 +146,32 @@ export const SignUp = () => {
 
             <div className="flex flex-col gap-2 pt-4 w-full">
                 <InputWithIcon Icon={<IoMdPerson size={20}/>} placeholder="username" setInput={setUsername} input={username} name="name"/>
-                <InputWithIcon Icon={<IoMail size={20}/>} placeholder="name@gmail.com" setInput={setEmail} input={email} name="email"/>
+                <InputWithIcon Icon={<IoMail size={20} color={verified?"orange":"white"}/>} placeholder="name@gmail.com" setInput={setEmail} input={email} name="email"/>
                 <InputWithIcon Icon={<GiWorld size={20}/>} placeholder="country" setInput={setCountry} input={country} name="country"/>
                 <InputWithIcon Icon={<RiLockPasswordFill size={20}/>} placeholder="password" setInput={setPassword} input={password} type="password" name="password"/>
                 <InputWithIcon Icon={<TbPasswordUser size={20}/>} placeholder="confirm password" setInput={setConfirmPassword} input={confirmPassword} type="password" name="ConfirmPassword"/>
                 {error && <div className="text-red-500 text-sm">{error}</div>}
 
-                <button
-                    onClick={handleSignUp}
-                    className={`p-2 rounded-md text-white transition-all duration-300 ease-in-out ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-cyan-500 hover:bg-cyan-600 active:scale-95"}`}
-                    disabled={loading}
-                >
-                    {loading ? "Signing up..." : "Sign up"}
-                </button>
+                {
+                    email && !verified?
+                        <Button label="Verify email" onClick={sendOtp} fullWidth={true} variant="goldenGlow" className="text-black"/>
+                    :
+                        <button
+                            onClick={handleSignUp}
+                            className={`p-2 rounded-md text-white transition-all duration-300 ease-in-out ${loading ? "bg-cyan-800 cursor-not-allowed" : "bg-cyan-500 hover:bg-cyan-600 active:scale-95"}`}
+                            disabled={loading}
+                        >
+                            {loading ? "Signing up..." : "Sign up"}
+                        </button>
+                }
+                
             </div>
 
             <div className="flex w-full gap-2 p-1 mt-3">
                 {/* Google Login */}
                 <div
                     className="flex justify-center items-center w-3/6 h-12 bg-white rounded-md cursor-pointer hover:bg-gray-300 transition-all duration-500 ease-in-out active:scale-95"
-                    onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+                    onClick={() => signIn("google", { redirect: true, callbackUrl: "/dashboard" })}
                 >
                     <FcGoogle size={30}/>
                 </div>
@@ -118,12 +179,12 @@ export const SignUp = () => {
                 {/* GitHub Login */}
                 <div
                     className="w-3/6 h-12 flex items-center justify-center gap-3 font-bold text-white bg-gray-900 border border-gray-700 rounded-md cursor-pointer transition-all duration-300 ease-in-out hover:bg-gray-800 hover:shadow-lg active:scale-95"
-                    onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
+                    onClick={() => signIn("github", { redirect: true, callbackUrl: "/dashboard" })}
                 >
                     <FaGithub size={30}/>
                 </div>
             </div>
-
+        
             <div className="flex justify-start p-2 gap-1 items-center cursor-pointer">
                 <div className="text-gray-400">Already have an account?</div>
                 <div
@@ -133,6 +194,7 @@ export const SignUp = () => {
                     Log in
                 </div>
             </div>
+            {otpSent && <OTPPopUP email={email} otpSent={otpSent} setOtpSend={setOtpSend} setVerified={setVerified}/>}
         </div>
     );
 };

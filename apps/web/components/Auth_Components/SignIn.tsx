@@ -93,7 +93,7 @@ export const SignIn = () => {
                 {/* Google Login */}
                 <div
                     className="flex justify-center items-center w-3/6 h-12 bg-white rounded-md cursor-pointer hover:bg-gray-300 transition-all duration-500 ease-in-out active:scale-95"
-                    onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+                    onClick={() => signIn("google", {redirect: true, callbackUrl: "/dashboard" })}
                 >
                     <FcGoogle size={30}/>
                 </div>
@@ -101,7 +101,7 @@ export const SignIn = () => {
                 {/* GitHub Login */}
                 <div
                     className="w-3/6 h-12 flex items-center justify-center gap-3 font-bold text-white bg-gray-900 border border-gray-700 rounded-md cursor-pointer transition-all duration-300 ease-in-out hover:bg-gray-800 hover:shadow-lg active:scale-95"
-                    onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
+                    onClick={() => signIn("github", {redirect: true, callbackUrl: "/dashboard" })}
                 >
                     <FaGithub size={30}/>
                 </div>

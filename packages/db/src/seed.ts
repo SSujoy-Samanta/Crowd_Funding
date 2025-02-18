@@ -7,7 +7,7 @@ async function main() {
     console.log("Seeding database...");
     const salt = await bcrypt.genSalt(10);
     // Ensure process.env.SECRET_USER_PASS is defined and not undefined or null
-    if (!process.env.SECRET_USER_PASS|| !process.env.DEFAULT_OTP) {
+    if (!process.env.SECRET_USER_PASS) {
         throw new Error(
             "SECRET_USER_PASS is not defined in the environment variables",
         );
@@ -16,7 +16,6 @@ async function main() {
         process.env.SECRET_USER_PASS,
         salt,
     );
-    const hashedOTP = await bcrypt.hash(process.env.DEFAULT_OTP, salt);
     // Create a user with an address and OTP
     const user = await prisma.user.create({
         data: {
@@ -31,23 +30,9 @@ async function main() {
                     state: "California",
                     city: "Los Angeles",
                 },
-            },
-            otp: {
-                create: {
-                    OTP: hashedOTP,
-                    expired: new Date(Date.now() + 5 * 60 * 1000), // Expires in 5 minutes
-                },
-            },
+            }
         },
     });
-    await prisma.verifyEmail.create({
-        data:{
-            OTP:hashedOTP,
-            email:"sujoysamanta1718@gmail.com",
-            verified:true,
-            expired: new Date()
-        }
-    })
 
     console.log("Seeding completed.");
 }
