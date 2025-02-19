@@ -40,10 +40,10 @@ model  Address{
   user      User     @relation(fields: [userId], references: [id])
 }
 model VerifyEmail{
-  id        Int      @id @default(autoincrement())
+  id        Int      @id  @default(autoincrement())
   OTP       String
-  email     String
-  verified    Boolean    @default(false)
-  created   DateTime @default(now())
+  email     String        @unique  
+  verified  Boolean       @default(false)
+  created   DateTime      @default(now())
   expired   DateTime
 }

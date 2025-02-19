@@ -2,13 +2,15 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import InputWithIcon from "../Inputs/InputWithSvg";
+import InputWithIcon from "../Inputs/InputWithIcon";
 import { useSetRecoilState } from "recoil";
 import { notificationState } from "@/lib/atom";
 import { IoMail } from "react-icons/io5";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import {  ForgetPasswordModal } from "./ForgetPassword";
+import Button from "../Buttons/buttons";
 export const SignIn = () => {
     const router = useRouter();
     const [email, setEmail] = useState("");
@@ -16,6 +18,7 @@ export const SignIn = () => {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const setNotification=useSetRecoilState(notificationState);
+    const [forget,setForget]=useState<boolean>(false);
 
     const handleSignIn = async () => {
         if (!email.trim() || !password) {
@@ -82,14 +85,26 @@ export const SignIn = () => {
 
                 <button
                     onClick={handleSignIn}
-                    className={`p-2 rounded-md text-white transition-all duration-300 ease-in-out ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-red-500 hover:bg-red-600 active:scale-95"}`}
+                    className={`p-2 rounded-md text-white transition-all duration-300 ease-in-out ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-red-500 hover:bg-red-600 active:scale-95"} mt-1`}
                     disabled={loading}
                 >
                     {loading ? "Logging in..." : "Log In"}
                 </button>
             </div>
+            
+            <div className="text-center">
+                <button
+                    onClick={() => setForget(true)}
+                    className="text-fuchsia-600 hover:text-fuchsia-700 hover:underline focus:outline-none"
+                >
+                    Forgot Password?
+                </button>
+                {forget && <ForgetPasswordModal setOpen={setForget}/>}
+            </div>
+           
+            
 
-            <div className="flex w-full gap-2 p-1 mt-3">
+            <div className="flex w-full gap-2 p-1 mt-1">
                 {/* Google Login */}
                 <div
                     className="flex justify-center items-center w-3/6 h-12 bg-white rounded-md cursor-pointer hover:bg-gray-300 transition-all duration-500 ease-in-out active:scale-95"

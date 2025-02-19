@@ -8,6 +8,7 @@ interface InputWithIconProps {
   placeholder?: string;
   type?: string;
   name:string;
+  className?:string
 }
 
 const InputWithIcon= ({ 
@@ -16,10 +17,11 @@ const InputWithIcon= ({
   setInput, 
   placeholder = "Enter text...", 
   type = "text" ,
-  name
+  name,
+  className="border-sky-500"
 }:InputWithIconProps) => {
   return (
-    <div className="flex items-center rounded-md space-x-2 border-2 border-sky-500">
+    <div className={`flex items-center rounded-md space-x-2 border-2 ${className} `}>
       {/* Normal Component as Icon */}
       <label className="flex justify-center items-center w-8 pl-1 cursor-pointer" htmlFor={name}>{Icon}</label>
 

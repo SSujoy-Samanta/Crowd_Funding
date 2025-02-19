@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import db from "@repo/db/db";
-import { SentOtp } from "@repo/common/zod";
+import { SentOtpSchema } from "@repo/common/zod";
 import { Otp } from "@/utils/otp";
 
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
     
-        const parseBody = SentOtp.safeParse(body);
+        const parseBody = SentOtpSchema.safeParse(body);
         if (!parseBody.success) {
             return NextResponse.json(
                 { msg: "Wrong Inputs", errors: parseBody.error.errors },
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
                     { status: 404 }
                 );
             }
-            otpRes=await Otp("Email Verification",parseBody.data?.email,true,user.id);
+            otpRes=await Otp("Forget Password",parseBody.data?.email,true,user.id);
            
         }else{
             otpRes=await Otp("Email Verification",parseBody.data?.email,false);

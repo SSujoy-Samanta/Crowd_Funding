@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const user = await db.user.findFirst({
+        const user = await db.user.findUnique({
             where: {
                 email: parseBody.data.email,
             },
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
                 { status: 409 },
             );
         }
-        const verifyEmail=await db.verifyEmail.findFirst({
+        const verifyEmail=await db.verifyEmail.findUnique({
             where:{
                 email:parseBody.data.email
             },

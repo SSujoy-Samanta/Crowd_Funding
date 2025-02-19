@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import InputWithIcon from "../Inputs/InputWithSvg";
+import InputWithIcon from "../Inputs/InputWithIcon";
 import { useSetRecoilState } from "recoil";
 import { notificationState } from "@/lib/atom";
 import { IoMdPerson } from "react-icons/io";
@@ -72,66 +72,72 @@ export const SignUp = () => {
                 setError("Credentials required.");
             }
             return;
-        }    
+        }       
         if(password!=confirmPassword){
             setError("Passwords do not match.");
-        }    
+            return;
+        }
         setLoading(true);
         setError(null); // Clear previous errors
-        try {
-            const response=await axios.post('/api/registration',{
-                username,
-                email,
-                password,
-                country,
-            })
-            if(!response.data.signup){
-                setNotification({ msg: response.data.msg , type: "error" });
-            }else{
-                const res = await signIn("credentials", {
-                    redirect: false, // Prevent auto-redirect for error handling
-                    email: email.trim(),
+        if(email.trim() && password && username && confirmPassword && verified && password===confirmPassword ){
+            try {
+                
+                const response=await axios.post('/api/registration',{
+                    username,
+                    email,
                     password,
-                });
-    
-                if (res?.error) {
-                    setError(res.error);
-                    if (res.status === 401) {
-                        setError('Invalid Credentials, try again!');
-                        setNotification({ msg: "Invalid Credentials, try again!", type: "error" });
-                    } else if (res.status === 400) {
-                        setError('Missing Credentials!');
-                    } else if (res.status === 404) {
-                        setError('Account not found!');
-                    } else if (res.status === 403) {
-                        setError('Forbidden!');
+                    country,
+                })
+                if(!response.data.signup){
+                    setNotification({ msg: response.data.msg , type: "error" });
+                }else{
+                    const res = await signIn("credentials", {
+                        redirect: false, // Prevent auto-redirect for error handling
+                        email: email.trim(),
+                        password,
+                    });
+        
+                    if (res?.error) {
+                        setError(res.error);
+                        if (res.status === 401) {
+                            setError('Invalid Credentials, try again!');
+                            setNotification({ msg: "Invalid Credentials, try again!", type: "error" });
+                        } else if (res.status === 400) {
+                            setError('Missing Credentials!');
+                        } else if (res.status === 404) {
+                            setError('Account not found!');
+                        } else if (res.status === 403) {
+                            setError('Forbidden!');
+                        } else {
+                            setError('oops something went wrong..!');
+                        }
                     } else {
-                        setError('oops something went wrong..!');
+                        router.push("/dashboard");
+                        setNotification({ msg: response.data.msg , type: "success" });
+                       
                     }
-                } else {
-                    router.push("/dashboard");
-                    setNotification({ msg: response.data.msg , type: "success" });
-                   
+                    
                 }
                 
+            } catch (e: any) {
+                
+                if(e.response?.data?.errors){
+                    setError(e.response?.data?.errors[0]?.message);
+                    setNotification({
+                        msg:e.response?.data?.errors[0]?.message ,
+                        type: "error",
+                    });
+                }else{
+                    setError(e.response?.data?.msg);
+                    setNotification({
+                        msg:e.response?.data?.msg,
+                        type: "error",
+                    });
+                }
+                
+            } finally {
+                setLoading(false);
             }
-            
-        } catch (e: any) {
-            setError("Something went wrong. Please try again.");
-            if(e.response?.data?.errors){
-                setNotification({
-                    msg:e.response?.data?.errors[0]?.message ,
-                    type: "error",
-                });
-            }else{
-                setNotification({
-                    msg:e.response?.data?.msg,
-                    type: "error",
-                });
-            }
-            
-        } finally {
-            setLoading(false);
         }
     };
 

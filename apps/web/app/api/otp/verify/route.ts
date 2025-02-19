@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import db from "@repo/db/db";
 import bcrypt from "bcrypt";
-import { VerifyOtp } from "@repo/common/zod";
+import { VerifyOtpSchema } from "@repo/common/zod";
 
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const parseBody=VerifyOtp.safeParse(body);
+        const parseBody=VerifyOtpSchema.safeParse(body);
         if (!parseBody.success) {
             return NextResponse.json(
                 { msg: "Wrong Inputs", errors: parseBody.error.errors },
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
             
         }else{
             // Find user with the provided email for non existing user
-            const user = await db.verifyEmail.findFirst({
+            const user = await db.verifyEmail.findUnique({
                 where: { email }, 
             });
 
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
         }
 
         // OTP verification successful
-        return NextResponse.json({ msg: "OTP Verified Successfully", verified:true }, { status: 200 });
+        return NextResponse.json({ msg: "OTP Verification Successfully", verified:true }, { status: 200 });
     } catch (error) {
         console.error("Error in OTP verification:", error);
         return NextResponse.json({ msg: "Internal Server Error" }, { status: 500 });

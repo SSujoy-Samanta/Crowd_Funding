@@ -27,7 +27,7 @@ export async function sendEmail(otp: string, To: string, subject: string): Promi
                     </div>
                     
                     <!-- Main Content -->
-                    <h2 style="color: #2B6CB0; font-size: 22px; font-weight: bold; text-align: center;">Your Email Verification OTP</h2>
+                    <h2 style="color: #2B6CB0; font-size: 22px; font-weight: bold; text-align: center;">Your ${subject} OTP</h2>
                     <p style="font-size: 16px; color: #333; text-align: center;">Hello,</p>
                     <p style="font-size: 16px; color: #333; text-align: center;">To complete your registration, please use the OTP below:</p>
 
