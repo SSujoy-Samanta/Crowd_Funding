@@ -8,7 +8,7 @@ export default async function SigUP(){
       if (session?.user) {
         redirect('/');
     }
-    return <div className="flex justify-center items-center w-full mt-10">
+    return <div className="flex justify-center items-center w-full min-h-screen">
         <SignUp/>
     </div>
 }

@@ -1,7 +1,7 @@
 import SkeletonLoader from "@/components/Loading/Loading4";
 
 export default function SignINLoading(){
-    return <div className="w-full h-screen pt-14 flex justify-center  mt-12">
+    return <div className="w-full h-screen flex justify-center items-center">
         <SkeletonLoader/>
     </div>
 }

@@ -1,0 +1,1 @@
+{"root":["./src/contractaddress.ts","./src/events.ts","./src/index.ts","./src/db/db.ts","./src/logevents/campaignevent.ts","./src/logevents/factoryevent.ts","./src/logevents/indexerlog.ts","./src/logevents/decodelog.ts"],"version":"5.7.3"}

@@ -10,8 +10,8 @@ export const config = {
     "/signup/:path*",
     "/signin/:path*",
     "/dashboard/:path*",
-    "/admin/:path*",
-    "/chats/:path*",
+    "/profile/:path*",
+    "/campaign/:path*",
     "/room/:path*",
     "/friends/:path*",
     "/user/:path*",
@@ -34,8 +34,8 @@ export async function middleware(req: NextRequest) {
     if (
         req.nextUrl.pathname.startsWith("/dashboard") ||
         req.nextUrl.pathname.startsWith("/admin") ||
-        req.nextUrl.pathname.startsWith("/chats") ||
-        req.nextUrl.pathname.startsWith("/room") ||
+        req.nextUrl.pathname.startsWith("/profile") ||
+        req.nextUrl.pathname.startsWith("/campaign/") ||
         req.nextUrl.pathname.startsWith("/friends") ||
         req.nextUrl.pathname.startsWith("/user") ||
         req.nextUrl.pathname.startsWith("/videocall") ||

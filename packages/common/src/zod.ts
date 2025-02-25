@@ -1,4 +1,4 @@
-import z from "zod";
+import z, { string } from "zod";
 
 const email=z.string()
 .min(1, "Email is required")
@@ -37,3 +37,32 @@ export const ForgetPasswordSchema=z.object({
     password,
     otp:z.string().length(4,"OTP should be in 4 digit"),
 })
+
+export const CampaignSchema=z.object({
+    userId:z.number(),
+    metadataId:z.number(),
+    transactionHash:z.string().startsWith('0x'),
+    tags: z.array(z.string()).min(3, "At least 3 tags are required").max(5, "No more than 5 tags allowed"),
+})
+
+export const MetadataStep1Schema = z.object({
+    userId: z.number(),
+    metadataId:z.number().nullable(),
+    country: z.string().nonempty(),
+    state: z.string().nonempty(),
+    category: z.string().nonempty(),
+});
+
+export const MetadataStep2Schema =z.object({
+    userId: z.number(),
+    metadataId:z.number(),
+    goal:z.string().nonempty()
+})
+
+
+export const MetadataStep3Schema = z.object({
+    userId: z.number(),
+    metadataId: z.number(),
+    title: z.string().nonempty().min(10).max(50),
+    description: z.string().nonempty().min(50).max(500),
+});

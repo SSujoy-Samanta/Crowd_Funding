@@ -5,6 +5,10 @@ import { Provider } from "../components/Provider";
 import { Notification } from "@/components/notification";
 import { AuthButtons } from "@/components/AuthButton";
 import { AppBar } from "@/components/AppBar";
+import { Sidebar } from "@/components/Sidebar/SideBar";
+import { cookieToInitialState } from "wagmi";
+import getConfig from "next/config";
+import { headers } from "next/headers";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -20,17 +24,24 @@ export const metadata: Metadata = {
   description: "Decentralized Crowd Funding",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const initialState = cookieToInitialState(
+    getConfig(),
+    (await headers()).get('cookie')
+  )
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} bg-slate-900  text-white`}>
-        <Provider>
-          <AppBar/>
-          {children}
+        <Provider initialState={initialState}>
+          <div className="relative flex min-h-screen flex-col">
+            <AppBar/>
+            <main className="flex-1">{children}</main>
+            {/* <Footer /> */}
+          </div>
           <Notification/>
         </Provider>
       </body>

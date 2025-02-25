@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Campaign" ALTER COLUMN "Goal" SET DATA TYPE TEXT;

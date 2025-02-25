@@ -62,15 +62,6 @@ export const WalletPopUp = () => {
                 {/* Options */}
                 <div className="space-y-3">
                     <WalletOptions/>
-                    {/* <button className="w-full py-2 rounded-md bg-blue-600 hover:bg-blue-700">
-                    Connect with Wallet
-                    </button>
-                    <button className="w-full py-2 rounded-md bg-green-600 hover:bg-green-700">
-                    Connect with Email
-                    </button>
-                    <button className="w-full py-2 rounded-md bg-purple-600 hover:bg-purple-700">
-                    Connect with Social Media
-                    </button> */}
                 </div>
                 </motion.div>
             </motion.div>

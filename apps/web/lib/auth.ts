@@ -74,7 +74,7 @@ export const NEXT_AUTH={
     },
     secret: process.env.NEXTAUTH_SECRET,
     callbacks:{
-        async signIn({ user, account }: any) {
+        async signIn({ user, account,profile }: any) {
             if (
               account &&
               user &&

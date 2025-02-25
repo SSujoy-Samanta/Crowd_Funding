@@ -2,7 +2,7 @@ import Image, { type ImageProps } from "next/image";
 import { Button } from "@repo/ui/button";
 import styles from "./page.module.css";
 import { Interaction } from "../components/Interaction";
-import { CreateCampaign} from "../components/CreateCampaign";
+import { CreateCampaign} from "../components/Campaign/CreateCampaign";
 import { Account } from "../components/Account";
 import { GetDeployedContracts } from "../components/GetDepolyedContracts";
 import { CreatorCampaign } from "../components/CreatorCampaign";
@@ -14,6 +14,7 @@ import { ContributeFund } from "../components/ContributeFund";
 import { Voting } from "../components/Voting";
 import { WithDrawFund } from "../components/WithDrawFund";
 import { ClaimRefund } from "../components/ClaimRefund";
+import { HeroPage } from "@/components/Hero/hero";
 
 type Props = Omit<ImageProps, "src"> & {
   srcLight: string;
@@ -33,11 +34,11 @@ const ThemeImage = (props: Props) => {
 
 export default function Home() {
   return (
-    <div className="text-red-500  md:text-blue-500 sm:text-amber-200">
-      <Account/>
+    <div className="text-red-500  md:text-blue-500 sm:text-amber-200 pt-24">
+      {/* <Account/>
       <Interaction/>
       <CreateCampaign/>
-      <GetDeployedContracts/>
+      <GetDeployedContracts/> */}
       <CreatorCampaign/>
       <CampaignGoal/>
       <FundingRaised/>
@@ -47,6 +48,8 @@ export default function Home() {
       <Voting/>
       <WithDrawFund/>
       <ClaimRefund/>
+      <HeroPage/>
+     
     </div>
   );
 }

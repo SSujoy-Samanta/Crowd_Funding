@@ -14,13 +14,16 @@ datasource db {
 }
 
 model User{
-  id        Int     @id  @default(autoincrement())
-  username  String 
-  email     String  @unique
-  password  String
-  verified     Boolean     @default(false)
-  otp       Otp?
-  address   Address?
+  id                  Int       @id  @default(autoincrement())
+  username            String 
+  email               String    @unique
+  password            String
+  verified            Boolean   @default(false)
+  otp                 Otp?
+  address             Address?
+  campaigns           Campaign[]   @relation("UserCampaigns") // A user can create multiple campaigns
+  campaignMetaData    CampaignMetadata[]   @relation("UserCampaignMetadata") 
+  contributions       Contributor[] // A user can contribute to multiple campaigns
 }
 model Otp {
   id        Int      @id @default(autoincrement())
@@ -46,4 +49,66 @@ model VerifyEmail{
   verified  Boolean       @default(false)
   created   DateTime      @default(now())
   expired   DateTime
+}
+model Campaign {
+  id              Int          @id    @default(autoincrement())
+  userId          Int
+  user            User         @relation(fields: [userId], references: [id], name: "UserCampaigns")
+  walletAddress   String?      
+  Goal            String?
+  deployedAddress String?      @unique
+  withdrawn       Boolean      @default(false)
+  transactionHash String       @unique
+  votingStatus    VotingStatus @default(Pending)
+  contributors    Contributor[] // A campaign can have multiple contributors
+  metadataId      Int          @unique
+  metadata        CampaignMetadata @relation(fields: [metadataId], references: [id])
+}
+model CampaignMetadata {
+  id            Int       @id @default(autoincrement())
+  userId        Int
+  user          User      @relation(fields: [userId], references: [id], name: "UserCampaignMetadata")
+  campaign      Campaign?
+  title         String    
+  description   String
+  category      String
+  goal          String?
+  imageUrl      String?
+  tags          String[]  @default([])
+  country       String
+  state         String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+
+model Contributor {
+  id              Int       @id  @default(autoincrement())
+  userId          Int
+  user            User      @relation(fields: [userId], references: [id])
+  campaignId      Int
+  campaign        Campaign  @relation(fields: [campaignId], references: [id])
+  walletAddress   String?      
+  amount          BigInt?   
+  transactionHash String   @unique
+  timestamp       DateTime @default(now()) 
+}
+model ProcessBlock {
+  id         Int    @id @default(1) 
+  lastBlock  String @default("0") 
+}
+model IndexedEvent {
+  id          String  @id  // Use transaction hash as unique ID
+  blockNumber Int
+  logIndex    Int
+  eventName   String
+  createdAt   DateTime @default(now())
+
+  @@unique([blockNumber, logIndex])  // Ensure no duplicate logs
+}
+
+enum VotingStatus {
+  Pending
+  OnGoing
+  Completed    
 }

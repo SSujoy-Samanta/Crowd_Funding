@@ -8,20 +8,20 @@ export function Account() {
     const { data: ensName } = useEnsName({ address });
     const { data: ensAvatar } = useEnsAvatar({ name: ensName! });
 
-    const [isDisconnecting, setIsDisconnecting] = useState(false);
+    // const [isDisconnecting, setIsDisconnecting] = useState(false);
 
     const balance = useBalance({
         address
     })
 
-    const handleDisconnect = async () => {
-        setIsDisconnecting(true);
-        try {
-            disconnect();
-        } finally {
-            setIsDisconnecting(false);
-        }
-    };
+    // const handleDisconnect = async () => {
+    //     setIsDisconnecting(true);
+    //     try {
+    //         disconnect();
+    //     } finally {
+    //         setIsDisconnecting(false);
+    //     }
+    // };
 
   return (
         <div className="flex justify-center items-center gap-3">
@@ -32,7 +32,7 @@ export function Account() {
                 <p className="text-yellow-500 font-bold"> Your balance - {balance.data?.formatted}</p>
             </div>}
 
-            <button
+            {/* <button
                 onClick={handleDisconnect}
                 disabled={!isConnected || isDisconnecting}
                 className={`rounded-md px-4 py-2 text-white transition 
@@ -40,7 +40,7 @@ export function Account() {
                 `}
             >
                 {isDisconnecting ? "Disconnecting..." : "Disconnect"}
-            </button>
+            </button> */}
         </div>
   );
 }

@@ -12,6 +12,6 @@ export const Interaction=()=>{
     })
 
     return <div>
-        The ownwr id  {JSON.stringify(data?.toString())}
+        The owner id  {JSON.stringify(data?.toString())}
     </div>
 }

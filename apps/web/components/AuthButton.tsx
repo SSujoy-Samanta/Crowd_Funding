@@ -3,6 +3,8 @@ import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 import Button from "./Buttons/buttons";
+import { ProfileModal } from "./ProfileModal";
+import { Profile } from "./Profile";
 
 
 export const AuthButtons = () => {
@@ -11,6 +13,7 @@ export const AuthButtons = () => {
   const session = useSession();
   const username = session.data?.user?.name || "unknown";
   const email = session.data?.user?.email || "unknown@gmail.com";
+  
   return (
     <div>
       {session.data !== null ? (
@@ -18,22 +21,21 @@ export const AuthButtons = () => {
           <div className="flex gap-2 sm:flex xxs:hidden ">
           </div>
           <div className="">
-            {/* <Profile
-              onClick={() => {
-                setToggle((x) => !x);
-              }}
-              userName={`${username}`}
-            />
-            {toggle && (
-              <ProfileModal
-                username={username}
-                email={email}
-                setToggle={setToggle}
+            <div className="">
+              <Profile
+                onClick={() => {
+                  setToggle((x) => !x);
+                }}
+                userName={`${username}`}
               />
-            )} */}
-            <Button label="Log out" variant="fieryRed" onClick={()=>{
-                signOut();
-            }}/>
+              {toggle && (
+                <ProfileModal
+                  username={username}
+                  email={email}
+                  setToggle={setToggle}
+                />
+              )}
+            </div>
           </div>
         </div>
       ) : (
