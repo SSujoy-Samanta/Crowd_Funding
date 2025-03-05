@@ -14,7 +14,10 @@ import { ContributeFund } from "../components/ContributeFund";
 import { Voting } from "../components/Voting";
 import { WithDrawFund } from "../components/WithDrawFund";
 import { ClaimRefund } from "../components/ClaimRefund";
-import { HeroPage } from "@/components/Hero/hero";
+// import { HeroPage } from "@/components/Hero/hero";
+import VerticalVoteBarChart from "@/components/dashboard/BarChart";
+import HomePage from "@/components/Hero/HomePage";
+
 
 type Props = Omit<ImageProps, "src"> & {
   srcLight: string;
@@ -34,21 +37,22 @@ const ThemeImage = (props: Props) => {
 
 export default function Home() {
   return (
-    <div className="text-red-500  md:text-blue-500 sm:text-amber-200 pt-24">
+    <div className="">
       {/* <Account/>
       <Interaction/>
       <CreateCampaign/>
-      <GetDeployedContracts/> */}
+      <GetDeployedContracts/>
       <CreatorCampaign/>
       <CampaignGoal/>
-      <FundingRaised/>
+      <FundingRaised address='0x8398bCD4f633C72939F9043dB78c574A91C99c0A'/>
       <VotingStatus/>
       <FundingApproveStatus/>
       <ContributeFund/>
-      <Voting/>
+      <Voting contractAddress="0x8398bCD4f633C72939F9043dB78c574A91C99c0A"/>
       <WithDrawFund/>
       <ClaimRefund/>
-      <HeroPage/>
+      <HeroPage/> */}
+      <HomePage/>
      
     </div>
   );

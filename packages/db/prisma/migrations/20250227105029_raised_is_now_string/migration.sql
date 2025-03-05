@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Campaign" ALTER COLUMN "raised" SET DEFAULT '0.0',
+ALTER COLUMN "raised" SET DATA TYPE TEXT;

@@ -15,6 +15,9 @@ const config: Config = {
         'eth-dark-light': 'linear-gradient(135deg, #161b29, #232d49, #4c3c7b, #6a56a5)',
           
       },
+      animation: {
+        "spin-slow": "spin 8s linear infinite",
+      },
     },
     screens: {
       sm: "640px",

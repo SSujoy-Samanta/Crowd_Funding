@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Contributor" ALTER COLUMN "amount" SET DEFAULT '0.0',
+ALTER COLUMN "amount" SET DATA TYPE TEXT;

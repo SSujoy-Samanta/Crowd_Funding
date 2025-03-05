@@ -64,7 +64,7 @@ export  function CountryStateSelect({
                 >
                     <option value="" disabled>Select a state</option>
                     {countries
-                    .find((c) => c.code === selectedCountry)
+                    .find((c) => c.name === selectedCountry)
                     ?.states.map((state) => (
                         <option key={state} value={state}>
                         {state}

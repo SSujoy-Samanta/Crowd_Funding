@@ -1,0 +1,226 @@
+'use client';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { GoPerson } from "react-icons/go";
+import Button from "@/components/Buttons/buttons";
+import { TfiStatsUp } from "react-icons/tfi";
+import { BiDonateHeart } from "react-icons/bi";
+import { RiWallet3Line } from "react-icons/ri";
+import { FaEthereum } from "react-icons/fa6";
+import { GiWorld } from "react-icons/gi";
+import { Description } from "./Description";
+import { SocialMedia } from "./SocialMedia";
+import { CircleBar } from "./CircleBar";
+import { useFundingRaised } from "@/hook/FundRaised";
+import { useCampaignGoal } from "@/hook/campaignGoal";
+import { Address, isAddress } from "viem";
+import { ethers } from "ethers";
+import { ContributeFund } from "../contributions/Contribute";
+import ContributorsModal from "./ContributionModal";
+
+interface Metadata {
+    title: string;
+    description: string;
+    category: string;
+    goal: string;
+    imageUrl: string | null;
+    country: string;
+    state: string;
+}
+interface Contributors{
+    walletAddress: string;
+    amount: string;
+}
+
+interface User {
+    username: string;
+}
+
+interface Campaign {
+    user: User;
+    walletAddress: string | null;
+    Goal: string;
+    raised:string;
+    deployedAddress: string | null;
+    transactionHash: string;
+    metadata: Metadata;
+    contributors:Contributors[]
+}
+
+
+export const FundraiserCard = ({campaign}:{
+    campaign:Campaign
+}) => {
+    const [contribute,setContribute]=useState<boolean>(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const shareCampaign = (platform: string) => {
+        const url = encodeURIComponent(window.location.href);
+        const title = encodeURIComponent("Support this important cause!");
+        const links: Record<string, string> = {
+            facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+            whatsapp: `https://api.whatsapp.com/send?text=${title}+${url}`,
+            x: `https://x.com/intent/tweet?url=${url}&text=${title}`,
+            linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
+        };
+        window.open(links[platform], "_blank");
+    };
+    const Goal = campaign.Goal && Number(campaign.Goal) > 0? parseFloat(ethers.formatEther(BigInt(campaign.Goal.toString()))): 0;
+
+    const Raised = campaign.raised  && Number(campaign.raised) > 0? parseFloat(ethers.formatEther(BigInt(campaign.raised.toString()))): 0;
+
+    const rawAddress: string | null = campaign?.deployedAddress;
+
+    // Validate the string before casting it as an Address
+    const validAddress: Address | null = rawAddress && isAddress(rawAddress) ? (rawAddress as Address) : null;
+
+    const raisedEth = useFundingRaised(validAddress ?? "0x0000000000000000000000000000000000000000"); 
+
+    const CampaignGoal=useCampaignGoal(validAddress ?? "0x0000000000000000000000000000000000000000");
+
+    const percentage= (raisedEth && CampaignGoal)?(raisedEth/CampaignGoal)*100:(Raised/Goal)*100;
+    const totalContribution = campaign.contributors.length;
+    const highestContributor = campaign.contributors.reduce(
+        (maxContributor, c) => {
+          const amount = BigInt(c.amount); 
+          return amount > maxContributor.amount
+            ? { user: c.walletAddress, amount } 
+            : maxContributor;
+        },
+        { user: "" as string, amount: BigInt(0) }
+    );
+      
+      
+      
+    
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="w-full px-28 justify-center p-2 pt-28  flex flex-col md:flex-row gap-6 max-h-screen overflow-y-scroll scrollbar-hide ">
+            {/* Left Side (Image + Title) */}
+            <div className="md:w-2/3 flex flex-col gap-3">
+                
+                <h2 className="text-2xl font-bold mt-4">
+                    {campaign.metadata.title}
+                </h2>
+                <img
+                    src={campaign.metadata.imageUrl||"/health.jpeg"}
+                    alt={campaign.metadata.category}
+                    className="w-full rounded-lg shadow-md h-4/6 shadow-slate-500"
+                />
+                <div className="pl-4">
+                    <div className="flex justify-start items-center text-center my-3 gap-2">
+                        <div className="p-2 rounded-full flex justify-center items-center bg-slate-500">
+                            <GoPerson size={20} className="text-amber-500"/>
+                        </div>
+                        <div>
+                            <p className="text-gray-300 mt-2 text-lg"><b>{campaign.user.username}</b> is organizing this fundraiser.</p>
+                        </div>
+                    </div>
+                    <hr className="my-5 mr-24"/>
+                    {campaign.deployedAddress && 
+                        <>
+                            <div className="flex justify-start items-center text-center my-3 gap-2">
+                                <div className="p-2 rounded-full flex justify-center items-center bg-slate-500">
+                                    <FaEthereum size={20} className="text-blue-800"/>
+                                </div>
+                                <div>
+                                    <p className="text-gray-300 mt-2 text-lg"><b>Contract Address:</b> {campaign.deployedAddress.slice(0,6)+"..."+campaign.deployedAddress.slice(-7)}</p>
+                                </div>
+                            </div>
+                            <hr className="my-5 mr-24"/>
+                        
+                        </>
+                    }
+                    
+                    <Description text={campaign.metadata.description}/>
+
+                </div>
+                
+            </div>
+
+            {/* Right Side (Donation Info) */}
+            <div className="md:w-1/4 bg-white p-4 rounded-lg shadow-lg shadow-gray-500 mt-14 sticky top-0">
+                <div className="flex items-center justify-between p-2">
+                    <div className="flex flex-col gap-1">
+                        <div className="text-2xl font-bold text-black">{raisedEth || Raised } ETH</div>
+                        <p className="text-black text-2xl font-bold">raised </p>
+                        <p className="text-gray-600 text-base"><b>{CampaignGoal|| Goal || campaign.metadata.goal} Eth</b> goal</p>
+                    </div>
+                    <div>
+                        <CircleBar max={percentage>=100?100:percentage} />
+                    </div>
+                </div>
+                {/* Buttons */}
+                <div className="mt-4 space-y-2 p-2 flex flex-col">
+                    <Button label="Contribute Now" variant="goldenGlow" onClick={()=>{setContribute(x=>!x)}}/>
+                    <Button label="Share" onClick={() => shareCampaign("facebook")} variant="blueOcean"/>
+                    
+                </div>
+                {contribute && validAddress && <ContributeFund ContractAddress={validAddress} setContribute={setContribute}/>}
+                <div className="flex gap-2 items-center justify-start my-4 pl-4">
+                    <div className="p-2 rounded-full flex justify-center items-center bg-fuchsia-500 ">
+                        <TfiStatsUp size={25} className="text-slate-700"/>
+                    </div>
+                    <div>
+                        <p className="text-slate-600 text-lg"><b>{totalContribution}</b> people just donated</p>
+                    </div>
+                </div>
+                <div className="flex gap-2 items-center justify-start my-4 pl-4">
+                    <div className="p-2 rounded-full flex justify-center items-center bg-teal-300 ">
+                        <GiWorld size={25} className="text-blue-500"/>
+                    </div>
+                    <div className="flex flex-col justify-start  gap-0.5">
+                        <p className="text-slate-600 text-lg">{campaign.metadata.state}, {campaign.metadata.country}</p>
+                    </div>
+                </div>
+                <div className="flex gap-2 items-center justify-start my-4 pl-4">
+                    <div className="p-2 rounded-full flex justify-center items-center bg-gray-300 ">
+                        <BiDonateHeart size={25} className="text-slate-700"/>
+                    </div>
+                    <div className="flex flex-col justify-start  gap-0.5">
+                        <p className="text-slate-600 text-lg">{highestContributor.user.slice(0,5)+"..."+highestContributor.user.slice(-5)}</p>
+                        <div className="flex gap-1 justify-start items-center">
+                            <b className="text-amber-500">{highestContributor.amount>BigInt(0)?ethers.formatEther(highestContributor.amount): 0} ETH</b>
+                            <p className="text-sm hover:underline hover:text-blue-500 text-slate-400">top donation</p>
+                        </div>
+                    </div>
+                </div>
+                {
+                    campaign.walletAddress && 
+                    <div className="flex gap-2 items-center justify-start my-4 pl-4">
+                        <div className="p-2 rounded-full flex justify-center items-center bg-amber-300 ">
+                            <RiWallet3Line size={25} className="text-slate-700"/>
+                        </div>
+                        <div>
+                            {
+                                <p className="text-slate-600 text-lg">
+                                    <b>
+                                        {campaign.walletAddress.slice(0, 5) + "..." + campaign.walletAddress.slice(-5)}
+                                    </b>
+                                </p>
+                            }
+                        </div>
+                    </div>
+                }
+
+                {/* Social Icons */}
+                <SocialMedia text={campaign.metadata.title}/>
+
+                <div className="flex justify-center items-center w-full mt-6 px-2">
+                    <Button label="See Doners" onClick={()=>{setIsModalOpen(x=>!x)}} variant="emeraldShine" className="w-full"/>
+                </div>
+                <ContributorsModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    contributors={campaign.contributors}
+                />
+            </div>
+        </motion.div>
+    );
+};
+
+
+

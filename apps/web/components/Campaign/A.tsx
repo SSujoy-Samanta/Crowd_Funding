@@ -81,7 +81,7 @@ export function A({
     }
 
     return (
-        <motion.div className="flex w-full gap-20 justify-between items-center p-8 bg-gradient-to-br from-pink-800 via-fuchsia-800 to-rose-800 rounded-md"
+        <motion.div className="flex w-full gap-20 justify-between items-center p-8 bg-gradient-to-r from-sky-600 to-cyan-600  rounded-md"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}

@@ -1,4 +1,3 @@
-import { StartCampaign } from "@/components/Campaign/D";
 import { CampaignForm } from "@/components/Campaign/CampaignForm";
 import { NEXT_AUTH } from "@/lib/auth";
 import { getServerSession } from "next-auth";

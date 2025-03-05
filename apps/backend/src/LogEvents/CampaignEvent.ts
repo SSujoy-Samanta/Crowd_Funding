@@ -9,16 +9,128 @@ export async function CampaignEvent(log:ethers.Log,parsedLog:ethers.LogDescripti
 
         const campaign=await db.campaign.findUnique({
             where:{
-                transactionHash:log.transactionHash
+                deployedAddress:log.address
             }
         })
-        if(campaign){
-            
-            console.log("updated database...");
-        }else{
-            console.log("Error during update database");
-        }
 
+        if (campaign) {
+            if (parsedLog.name === "Funded") {
+
+                const amount=parseFloat(campaign.raised)===0 ? parsedLog.args[1].toString(): await AddEth(campaign.raised,parsedLog.args[1].toString());
+                
+                await db.campaign.update({
+                    where:{
+                        id:campaign.id
+                    },
+                    data:{
+                        raised:amount
+                    }
+                })
+                const contributor=await db.contributor.findFirst({
+                    where:{
+                        campaignId:campaign.id,
+                        walletAddress:parsedLog.args[0],
+                    }
+                })
+                if(!contributor){
+                    await db.contributor.create({
+                        data:{
+                            transactionHash:[log.transactionHash],
+                            walletAddress:parsedLog.args[0],
+                            amount:parsedLog.args[1].toString(),
+                            campaignId:campaign.id
+                        }
+                    })
+                }else{
+                    const amount=parseFloat(contributor.amount)===0 ? parsedLog.args[1].toString(): await AddEth(contributor.amount,parsedLog.args[1].toString());
+                
+                    await db.contributor.update({
+                        where:{
+                            id:contributor.id
+                        },
+                        data:{
+                            transactionHash:{push:log.transactionHash},
+                            amount
+                        }
+                    })
+                }
+                
+            } else if (parsedLog.name === "Refunded") {
+                const contributor=await db.contributor.findFirst({
+                    where:{
+                        campaignId:campaign.id,
+                        walletAddress:parsedLog.args[0]
+                    }
+                })
+                if(!contributor){
+                    console.log(`🏦 Refunded Event - Receiver: ${parsedLog.args[0]} not found`)
+                }else{
+                    await db.contributor.update({
+                        where:{
+                            id:contributor.id
+                        },
+                        data:{
+                            refunded:true
+                        }
+                    })
+                }
+            } else if (parsedLog.name === "Withdrawn") {
+                await db.campaign.update({
+                    where:{
+                        id:campaign.id,
+                    },
+                    data:{
+                        withdrawn:true
+                    }
+                })
+            } else if (parsedLog.name === "Voted") {
+                const contributor=await db.contributor.findFirst({
+                    where:{
+                        campaignId:campaign.id,
+                        walletAddress:parsedLog.args[0]
+                    }
+                })
+                if(!contributor){
+                    console.log(`🗳️ Voted Event - Voter: ${parsedLog.args[0]} not found`)
+                }else{
+                    await db.contributor.update({
+                        where:{
+                            id:contributor.id
+                        },
+                        data:{
+                            vote:parsedLog.args[1]?"yes":"no"
+                        }
+                    })
+                }
+                
+            } else if (parsedLog.name === "VotingStarted") {
+                await db.campaign.update({
+                    where:{
+                        id:campaign.id,
+                    },
+                    data:{
+                        votingStatus:"OnGoing"
+                    }
+                })
+                
+            } else if (parsedLog.name === "VotingEnded") {
+                await db.campaign.update({
+                    where:{
+                        id:campaign.id,
+                    },
+                    data:{
+                        votingStatus:"Completed",
+                        VotingSuccess:parsedLog.args[0]
+                    }
+                })
+            }
+            console.log("updated database...");
+            
+        }else{
+            console.log("❌ Error: Campaign not found for update.");
+        }
+       
+        
         if (parsedLog.name === "Funded") {
             console.log(`💰 Funded Event - Funder: ${parsedLog.args[0]}, Amount: ${parsedLog.args[1]}`);
         } else if (parsedLog.name === "Refunded") {
@@ -35,6 +147,13 @@ export async function CampaignEvent(log:ethers.Log,parsedLog:ethers.LogDescripti
             console.log("⚠️ Unknown event detected:", parsedLog.name);
         }
     } catch (error) {
-        console.log("⚠️ Campaign event error.");
+        console.log("⚠️ Campaign event error."+error);
     }
+}
+
+async function AddEth(a:string,b:string):Promise<string> {
+    const value1: bigint = BigInt(a); 
+    const value2: bigint = BigInt(b);
+    const sum: bigint = value1 + value2;
+    return sum.toString();
 }

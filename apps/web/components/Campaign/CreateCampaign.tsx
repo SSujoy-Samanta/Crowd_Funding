@@ -28,9 +28,6 @@ export const CreateCampaign = ({userId,metadataId}:CreateCampaignProps) => {
     const convertEthToWei = (ethAmount: string) => parseEther(ethAmount);
 
 
-    // Hooks should not be inside conditions!
-    const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
-
     async function handleCreateNewContract() {
         if(Alltags.length===0){
             setNotification({ msg: "Please select relevant tags first.", type: "error" });
@@ -57,11 +54,13 @@ export const CreateCampaign = ({userId,metadataId}:CreateCampaignProps) => {
                 args: [BigInt(convertEthToWei(goal))],
             });
 
-            console.log("Transaction Hash:", tx);
+            //console.log("Transaction Hash:", tx);
         } catch (error) {
             console.error("Transaction error:", error);
         }
     }
+     // Hooks should not be inside conditions!
+    const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
     async function notifyBackend() {
         if (!hash || !userId || !metadataId || Alltags.length===0) return;
@@ -108,7 +107,7 @@ export const CreateCampaign = ({userId,metadataId}:CreateCampaignProps) => {
                     />
 
                     <div
-                        className={`flex flex-col justify-center items-center gap-1  bg-blue-600 rounded-md p-2
+                        className={`flex flex-col justify-center items-center gap-1 p-2
                         ${hash || isConfirming || isConfirmed || error ? "flex" : "hidden"}`}
                     >
                        

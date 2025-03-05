@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import db from "@repo/db/db";
-import { MetadataStep1Schema, MetadataStep2Schema, MetadataStep3Schema } from "@repo/common/zod";
-import { uploadImage } from "@/lib/cloudinary/upload";
+import { MetadataStep1Schema } from "@repo/common/zod";
+
 
 export async function POST(req: NextRequest) {
     try {

@@ -2,12 +2,13 @@
 
 import { ETH_DECIMAL } from "@/utils/wei";
 import { CrowdFundingABI } from "@repo/common/ABI";
+import { Address } from "viem";
 import { useReadContract } from "wagmi";
 
 
-export const FundingRaised = () => {
+export const FundingRaised = ({ address}:{ address:Address}) => {
     const { data, isLoading, error } = useReadContract({
-        address: '0x8398bCD4f633C72939F9043dB78c574A91C99c0A',
+        address,
         abi: CrowdFundingABI,
         functionName: 'fundsRaised', 
     });
@@ -17,7 +18,7 @@ export const FundingRaised = () => {
 
     return (
         <div>
-            Campaign Fund Raised - {ETH.toFixed(9)} ETH
+            {ETH.toFixed(9)} ETH
         </div>
     );
 };

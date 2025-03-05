@@ -4,19 +4,21 @@ import { motion } from "framer-motion";
 import { CiSearch } from "react-icons/ci";
 import { IoFilterOutline } from "react-icons/io5";
 import { IoMdClose } from "react-icons/io";
+import { ethers } from "ethers";
 
 interface CampaignContents {
     id: number;
     metadata: {
         title: string;
         category: string;
-        goal: string | null;
+        goal: string;
         imageUrl: string | null;
         tags: string[];
         country: string;
         state: string;
     };
-    Goal: string | null;
+    Goal: string;
+    raised:string;
     user: {
         username: string;
     };
@@ -47,8 +49,9 @@ export const SearchBox: React.FC<SearchBoxProps> = ({ campaigns, setData }) => {
         const filtered = campaigns.filter((campaign) => {
             const searchMatch = searchTerm.length === 0 || 
                 campaign.user.username?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                campaign.Goal?.toString().toLowerCase().includes(searchTerm.toLowerCase()) || 
-                campaign.metadata.title?.toLowerCase().includes(searchTerm.toLowerCase());
+                ethers.formatEther(campaign.Goal).toLowerCase().includes(searchTerm.toLowerCase()) || 
+                campaign.metadata.title?.toLowerCase().includes(searchTerm.toLowerCase())||
+                campaign.metadata.goal?.toLowerCase().includes(searchTerm.toLowerCase());
             
             const categoryMatch = !filters.category || campaign.metadata.category === filters.category;
             const countryMatch = !filters.country || campaign.metadata.country === filters.country;

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Button from "./Buttons/buttons";
 import { WalletOptions } from "./WalletOptions";
 import { useAccount, useDisconnect } from "wagmi";
-
+import { createPortal } from "react-dom";
 
 
 
@@ -12,6 +12,11 @@ export const WalletPopUp = () => {
     const { disconnect } = useDisconnect();
     const { address, isConnected } = useAccount();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isClient, setIsClient] = useState(false); 
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     const handleConnect = () => {
         setIsModalOpen(true);
@@ -33,14 +38,14 @@ export const WalletPopUp = () => {
         <Button label= {isConnected ? "Disconnect" : "Connect Wallet"} variant={isConnected?"sunsetGlow":"aquaBreeze"}  onClick={isConnected ? handleDisconnect : handleConnect}/>
     
         {/* Modal Popup */}
-        <AnimatePresence>
+        {isClient && createPortal(<AnimatePresence>
             {isModalOpen && (
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md"
+                className="fixed z-40 inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md"
             >
                 <motion.div
                     initial={{ y: 50, opacity: 0 }}
@@ -66,7 +71,7 @@ export const WalletPopUp = () => {
                 </motion.div>
             </motion.div>
             )}
-        </AnimatePresence>
+        </AnimatePresence>, document.body)}
     </div>
   );
 };

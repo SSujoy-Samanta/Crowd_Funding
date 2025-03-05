@@ -3,12 +3,11 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Provider } from "../components/Provider";
 import { Notification } from "@/components/notification";
-import { AuthButtons } from "@/components/AuthButton";
 import { AppBar } from "@/components/AppBar";
-import { Sidebar } from "@/components/Sidebar/SideBar";
 import { cookieToInitialState } from "wagmi";
 import getConfig from "next/config";
 import { headers } from "next/headers";
+import { Footer } from "@/components/Footer";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -40,7 +39,7 @@ export default async function RootLayout({
           <div className="relative flex min-h-screen flex-col">
             <AppBar/>
             <main className="flex-1">{children}</main>
-            {/* <Footer /> */}
+            <Footer/>
           </div>
           <Notification/>
         </Provider>

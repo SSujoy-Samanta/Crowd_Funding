@@ -1,10 +1,10 @@
-import { Loading3 } from "@/components/Loading/Loading3";
+import { Loading2 } from "@/components/Loading/Loading2";
 
 export default function LoadingCampaign() {
 
     return (
       <div className="w-full flex justify-center items-center min-h-screen">
-        <Loading3/>
+        <Loading2/>
       </div>
     );
 }

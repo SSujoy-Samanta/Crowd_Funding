@@ -4,7 +4,8 @@ import { JsonRpcProvider } from "ethers";
 import { EVENTS } from "./events";
 import { getContractAddresses } from "./contractAddress";
 import { db } from "./DB/db";
-import { isLogProcessed } from "./LogEvents/IndexerLog";
+import { ProcessedLog } from "./LogEvents/IndexerLog";
+
 
 const app = express();
 app.use(express.json());
@@ -71,11 +72,7 @@ async function pollNewBlocks() {
 
                 for (const log of logs) {
 
-                    // ✅ Skip if log is already processed
-                    if (await isLogProcessed(log,CONTRACT_ADDRESS)) {
-                        console.log(`⚠️ Skipping duplicate log ${log.transactionHash}`);
-                        continue;
-                    }
+                    await ProcessedLog(log,CONTRACT_ADDRESS);
                 }
             } else {
                 console.log("No new events.");

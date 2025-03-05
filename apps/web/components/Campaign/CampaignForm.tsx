@@ -12,17 +12,12 @@ export function CampaignForm() {
     const [step, setStep] = useState<number>(1);
     const [metadataId,setMetadataId]=useState<number|null>(null);
 
-    const [title, setTitle] = useState("");
-    const [story, setStory] = useState("");
-    const [image, setImage] = useState<File | null>(null);
-    const [preview, setPreview] = useState<string | null>(null);
-
     const { data: session } = useSession();
     //@ts-ignore
     const userId = session?.user?.id ? parseInt(session.user.id) : null;
 
-    const handleNext = () => setStep((prev) => prev + 1);
-    const handleBack = () => setStep((prev) => prev - 1);
+    // const handleNext = () => setStep((prev) => prev + 1);
+    // const handleBack = () => setStep((prev) => prev - 1);
 
     if (!userId) return <div className="flex justify-center items-center w-full">
         <Loading2 />

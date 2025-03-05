@@ -1,4 +1,6 @@
 import { AllCampaigns } from "@/components/Campaign";
+import { FundraiserCard } from "@/components/Campaign/view/CampaignView";
+
 import db from "@repo/db/db";
 
 export default async function Campaigns({
@@ -18,6 +20,7 @@ export default async function Campaigns({
                             username:true,
                         }
                     },
+                    raised:true,
                     metadata:{
                         select:{
                             title:true,
@@ -37,7 +40,9 @@ export default async function Campaigns({
                     {campaigns.length > 0 ? (
                         <AllCampaigns campaigns={campaigns}/>
                     ) : (
-                        <p>No campaigns found.</p>
+                        <div className="flex justify-center items-center  w-full text-xl font-bold">
+                            <p>No campaigns found.</p>
+                        </div>
                     )}
                 </div>
             );
@@ -49,9 +54,38 @@ export default async function Campaigns({
             throw new Error("Invalid campaign ID.");
         }
 
-        // Fetch single campaign
+        //Fetch single campaign
         const campaign = await db.campaign.findUnique({
             where: { id: campaignId },
+            select:{
+                user:{
+                    select:{
+                        username:true
+                    }
+                },
+                walletAddress:true,
+                Goal: true,
+                deployedAddress: true,
+                transactionHash: true,
+                raised:true,
+                metadata:{
+                    select:{
+                        title: true,
+                        description: true,
+                        category: true,
+                        goal: true,
+                        imageUrl:true,
+                        country:true,
+                        state:true,
+                    }
+                },
+                contributors:{
+                    select:{
+                        amount:true,
+                        walletAddress:true,
+                    }
+                }
+            }
         });
 
         if (!campaign) {
@@ -59,14 +93,7 @@ export default async function Campaigns({
         }
 
         return (
-            <div className="flex justify-center items-center min-h-screen w-full flex-col">
-                <div className="border p-4 rounded-lg shadow-md">
-                    <h1 className="text-xl font-bold">{campaign.walletAddress}</h1>
-                    <p className="text-gray-700">ID: {campaign.id}</p>
-                    <p className="text-gray-600">{campaign.deployedAddress}</p>
-                </div>
-            </div>
-            
+            <FundraiserCard campaign={campaign}/> 
         );
     } catch (error) {
         return <div className="flex justify-center items-center min-h-screen w-full">

@@ -10,13 +10,14 @@ interface CampaignContents {
     metadata: {
         title: string;
         category: string;
-        goal: string | null;
+        goal: string;
         imageUrl: string | null;
         tags: string[];
         country: string;
         state: string;
     };
-    Goal: string | null;
+    Goal: string;
+    raised:string;
     user: {
         username: string;
     };
@@ -28,7 +29,17 @@ interface Props {
 
 export const AllCampaigns = ({ campaigns }:Props) => {
     const [data, setData] = useState<CampaignContents[]>(campaigns);
-   
+    function ParseAmount(amount:string){
+        return  amount && Number(amount)? parseFloat(ethers.formatEther(amount.toString())): 0;
+    } 
+    
+    function Precentage(a:string,b:string){
+        const val1=ParseAmount(a);
+        const val2=ParseAmount(b);
+        const res= (val1/val2)*100
+
+        return res>=100?100:res;
+    }
     return (
         <section
         id="projects"
@@ -77,7 +88,7 @@ export const AllCampaigns = ({ campaigns }:Props) => {
                             {/* Goal Display */}
                             {campaign.Goal ? (
                                 <p className="text-white">
-                                    <span className="text-sky-500 font-bold">Goal:</span> {ethers.formatEther(campaign.Goal)} ETH
+                                    <span className="text-sky-500 font-bold">Goal:</span> {ethers.formatEther(campaign.Goal.toString())} ETH
                                 </p>    
                             ):
                                 <p className="text-white">
@@ -85,8 +96,10 @@ export const AllCampaigns = ({ campaigns }:Props) => {
                                 </p>
                             }
                             <div className="flex flex-col gap-2">
-                                <LineProgress max={85}/>
-                                <p className="text-white"><span className="font-bold text-amber-500 mr-1">{`2.00 ETH`}</span>raised</p>
+                                <LineProgress max={Precentage(campaign.raised,campaign.Goal)}/>
+                                <p className="text-white"><span className="font-bold text-amber-500 mr-1">{`${
+                                    ParseAmount(campaign.raised)
+                                } ETH`}</span>raised</p>
                             </div>
 
                             {/* Wallet Address */}
@@ -112,7 +125,7 @@ export const AllCampaigns = ({ campaigns }:Props) => {
                                         <FaWpexplorer size={35}/>
                                     </a>
                                 </div>
-                        </div>
+                            </div>
                         </div>
                     </motion.div>))}
                     

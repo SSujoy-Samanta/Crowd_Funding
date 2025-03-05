@@ -1,4 +1,4 @@
-import z, { string } from "zod";
+import z from "zod";
 
 const email=z.string()
 .min(1, "Email is required")
@@ -66,3 +66,13 @@ export const MetadataStep3Schema = z.object({
     title: z.string().nonempty().min(10).max(50),
     description: z.string().nonempty().min(50).max(500),
 });
+
+export const ContributionSchema=z.object({
+    walletAddress:z.string().startsWith('0x'),
+}) 
+
+export const ContributorsEmailSchema=z.object({
+    walletAddress:z.string().startsWith('0x'),
+    contractAddress:z.string().startsWith('0x'),
+    email
+})

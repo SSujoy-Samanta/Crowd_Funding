@@ -1,5 +1,5 @@
 "use client"
-import { IoPersonSharp } from "react-icons/io5";
+import { GoPerson } from "react-icons/go";
 export const Profile = ({
     userName,
     onClick,
@@ -10,10 +10,10 @@ export const Profile = ({
     const profile = userName[0]?.toUpperCase();
     return (
       <div onClick={onClick}>
-        <div className="bg-gradient-to-br from-black to-blue-600 text-white rounded-full w-10 h-10 p-2 font-semibold text-center  cursor-pointer">
+        <div className="bg-gradient-to-b from-cyan-500 to-white text-black rounded-full w-10 h-10 p-2 font-semibold text-center  cursor-pointer">
             {userName === "unknown" ? (
                 <div className="flex justify-center items-center">
-                    <IoPersonSharp size={20}/>
+                    <GoPerson size={20}/>
                 </div>
             ) : (
                 profile
