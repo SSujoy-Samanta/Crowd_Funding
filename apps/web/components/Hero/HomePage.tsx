@@ -59,18 +59,19 @@ const HomePage = () => {
                 <div className="container mx-auto justify-center items-start flex px-8 relative z-10">
                     <div className="w-4/6 text-center flex flex-col justify-center items-center pt-6 ">
                         <h1 className={`text-5xl md:text-7xl font-bold text-white mb-6 transition-transform duration-1000 ${isLoaded ? 'translate-y-0' : 'translate-y-10'} text-center`}>
-                            Decentralized Crowdfunding on <span className='bg-gradient-to-r from-blue-700 to-indigo-700  shadow-md hover:from-blue-600 hover:to-indigo-700  bg-clip-text text-transparent '>Ethereum</span>
+                            Decentralized Crowdfunding on <span className='bg-gradient-to-r from-blue-700 to-indigo-700 shadow-md hover:from-blue-600 hover:to-indigo-700  bg-clip-text text-transparent '>Ethereum</span>
                         </h1>
                         <p className={`text-xl text-indigo-100 mb-8 transition-transform duration-1000 delay-100 ${isLoaded ? 'translate-y-0' : 'translate-y-10'} w-3/4 text-slate-400`}>
                         Create campaigns, contribute ETH, and participate in transparent governance through blockchain voting
                         </p>
                         <div className={`flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 transition-transform duration-1000 delay-200 ${isLoaded ? 'translate-y-0' : 'translate-y-10'}`}>
-                            <button className="px-8 py-4 rounded-lg bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-md hover:from-purple-600 hover:to-pink-700 focus:ring-purple-400 font-medium hover:bg-indigo-600 transition-colors flex items-center justify-center" onClick={()=>{router.push('/campaign/start')}}>
+                            <button className="px-3 py-4 rounded-lg bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-md hover:from-purple-600 hover:to-pink-700 focus:ring-purple-400 font-medium hover:bg-indigo-600 transition-colors flex items-center justify-center" onClick={()=>{router.push('/campaign/start')}}>
                                 <Plus className="mr-2" size={20} />
                                 Create Campaign
                             </button>
                            
                             <Button label='Explore Campaigns' onClick={()=>{router.push('/campaigns')}} variant='emeraldShine'/>
+                            <Button label='Your Contributions' onClick={()=>{router.push('/contribution')}} variant='goldenGlow'/>
                         </div>
                     </div>
                   
@@ -206,7 +207,7 @@ const HomePage = () => {
                     </div>
                     <div>
                         <h3 className="text-xl font-bold mb-2 text-slate-200">Contributor Protection</h3>
-                        <p className="text-black font-bold">If a withdrawal request fails to receive majority approval, all contributions are automatically refunded to their original contributors</p>
+                        <p className="text-black font-bold">If a withdrawal request does not receive majority approval, contributors can manually claim a refund by interacting with the contract.</p>
                     </div>
                     </div>
                 </div>
