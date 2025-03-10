@@ -50,7 +50,8 @@ export async function CampaignEvent(log:ethers.Log,parsedLog:ethers.LogDescripti
                         },
                         data:{
                             transactionHash:{push:log.transactionHash},
-                            amount
+                            amount,
+                            timestamp:new Date()
                         }
                     })
                 }

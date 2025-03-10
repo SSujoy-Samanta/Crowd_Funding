@@ -75,6 +75,10 @@ export const ContributeFund = ({ContractAddress,setContribute}:ContributeFundPro
                 setErrorEmail("⚠️ Please enter a valid email address.");
                 return;
             }
+            if(!isConnected){
+                setErrorEmail("⚠️ Please Connect Your Wallet first.");
+                return;
+            }
             const res=await axios.post('/api/campaign/contribution/email',{
                 walletAddress:address,
                 email,
@@ -167,7 +171,7 @@ export const ContributeFund = ({ContractAddress,setContribute}:ContributeFundPro
                <div className="flex flex-col gap-2">
                     <label htmlFor="email" className="text-lg font-semibold">Get Voting Updates</label>
                     <InputWithIcon 
-                        Icon={<GoMail size={25}/>}
+                        Icon={<GoMail size={25} className="text-orange-500"/>}
                         type="email" 
                         input={email} 
                         name="email" 

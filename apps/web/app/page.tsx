@@ -38,22 +38,7 @@ const ThemeImage = (props: Props) => {
 export default function Home() {
   return (
     <div className="">
-      {/* <Account/>
-      <Interaction/>
-      <CreateCampaign/>
-      <GetDeployedContracts/>
-      <CreatorCampaign/>
-      <CampaignGoal/>
-      <FundingRaised address='0x8398bCD4f633C72939F9043dB78c574A91C99c0A'/>
-      <VotingStatus/>
-      <FundingApproveStatus/>
-      <ContributeFund/>
-      <Voting contractAddress="0x8398bCD4f633C72939F9043dB78c574A91C99c0A"/>
-      <WithDrawFund/>
-      <ClaimRefund/>
-      <HeroPage/> */}
       <HomePage/>
-     
     </div>
   );
 }

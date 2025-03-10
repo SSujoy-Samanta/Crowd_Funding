@@ -48,7 +48,7 @@ export const C = ({
         if (title.length < 10) newErrors.title = "Title must be at least 10 characters.";
         if (title.length > 50) newErrors.title = "Title cannot exceed 50 characters.";
         if (story.length < 50) newErrors.story = "Story must be at least 50 characters.";
-        if (story.length > 500) newErrors.story = "Story cannot exceed 500 characters.";
+        if (story.length > 3000) newErrors.story = "Story cannot exceed 3000 characters.";
         if (!image) newErrors.image = "Please upload an image.";
     
         setErrors(newErrors); 

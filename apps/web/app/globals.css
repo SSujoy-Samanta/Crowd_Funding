@@ -12,5 +12,6 @@
 .scrollbar-hide::-webkit-scrollbar {
     display: none; /* Hide scrollbar for Chrome, Safari, and Edge */
     scroll-behavior: smooth;
+    
 }
   

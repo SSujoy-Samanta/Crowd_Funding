@@ -2,15 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Wallet, Mail, Globe, Calendar, CreditCard } from "lucide-react";
-import { CiCreditCard1, CiCreditCard2, CiGlobe } from "react-icons/ci";
+import { CiCreditCard1 } from "react-icons/ci";
 import { IoMail, IoWallet } from "react-icons/io5";
-import { FaCalendar, FaUser } from "react-icons/fa";
 import { Card, CardContent, CardHeader, CardTitle } from "./Card";
 import { useSession } from "next-auth/react";
 import { useAccount, useBalance } from "wagmi";
 import { WalletPopUp } from "./WalletPopUp";
 import Button from "./Buttons/buttons";
+import { GoPerson } from "react-icons/go";
 
 interface UserProfile {
   username: string;
@@ -60,7 +59,7 @@ export const ProfileCard = () => {
         <CardHeader className="relative flex justify-center items-center flex-col text-center bg-gradient-to-br from-pink-500 via-blue-500 to-teal-500 h-36 rounded-md border-none ">
          <div className="absolute -bottom-16 flex justify-center items-center flex-col text-center">
             <div className="flex justify-center items-center rounded-full bg-gradient-to-br from-amber-400 to-pink-500 p-7 ">
-              <FaUser size={40} color="black" />
+              <GoPerson size={34} className="text-black"/>
             </div>
             <CardTitle className="text-2xl font-bold bg-gradient-to-r from-emerald-500 via-rose-500 to-sky-500 text-transparent bg-clip-text">{data.user.name}</CardTitle>
             {/* <p className="text-sm text-blue-800">Web3FundMe User</p> */}

@@ -17,6 +17,7 @@ import { Address, isAddress } from "viem";
 import { ethers } from "ethers";
 import { ContributeFund } from "../contributions/Contribute";
 import ContributorsModal from "./ContributionModal";
+import CommentSection from "./Comments";
 
 interface Metadata {
     title: string;
@@ -30,6 +31,12 @@ interface Metadata {
 interface Contributors{
     walletAddress: string;
     amount: string;
+    timestamp:Date
+}
+interface Comments{
+    wallet:string,
+    comment:string,
+    timestamp:Date
 }
 
 interface User {
@@ -37,6 +44,7 @@ interface User {
 }
 
 interface Campaign {
+    id:number;
     user: User;
     walletAddress: string | null;
     Goal: string;
@@ -44,7 +52,8 @@ interface Campaign {
     deployedAddress: string | null;
     transactionHash: string;
     metadata: Metadata;
-    contributors:Contributors[]
+    contributors:Contributors[],
+    comments:Comments[]
 }
 
 
@@ -136,6 +145,8 @@ export const FundraiserCard = ({campaign}:{
                     }
                     
                     <Description text={campaign.metadata.description}/>
+                    <hr className="my-5 mr-24"/>
+                    <CommentSection id={campaign.id} comments={campaign.comments}/>
 
                 </div>
                 
@@ -165,7 +176,7 @@ export const FundraiserCard = ({campaign}:{
                         <TfiStatsUp size={25} className="text-slate-700"/>
                     </div>
                     <div>
-                        <p className="text-slate-600 text-lg"><b>{totalContribution}</b> people just donated</p>
+                        <p className="text-slate-600 text-lg"><b>{totalContribution}</b> people donated</p>
                     </div>
                 </div>
                 <div className="flex gap-2 items-center justify-start my-4 pl-4">

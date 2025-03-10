@@ -58,6 +58,7 @@ export default async function Campaigns({
         const campaign = await db.campaign.findUnique({
             where: { id: campaignId },
             select:{
+                id:true,
                 user:{
                     select:{
                         username:true
@@ -83,6 +84,20 @@ export default async function Campaigns({
                     select:{
                         amount:true,
                         walletAddress:true,
+                        timestamp:true
+                    },
+                    orderBy:{
+                        timestamp:"desc"
+                    }
+                },
+                comments:{
+                    select:{
+                        wallet:true,
+                        timestamp:true,
+                        comment:true
+                    },
+                    orderBy:{
+                        timestamp:"desc"
                     }
                 }
             }

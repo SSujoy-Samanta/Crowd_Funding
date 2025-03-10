@@ -64,6 +64,7 @@ model Campaign {
   contributors    Contributor[] // A campaign can have multiple contributors
   metadataId      Int          @unique
   metadata        CampaignMetadata @relation(fields: [metadataId], references: [id])
+  comments        Comments[]   
 }
 model CampaignMetadata {
   id            Int       @id @default(autoincrement())
@@ -109,6 +110,15 @@ model IndexedEvent {
   createdAt        DateTime @default(now())
 
   @@unique([blockNumber, logIndex])  // Ensure no duplicate logs
+}
+
+model Comments{
+  id           Int  @id  @default(autoincrement())
+  comment      String
+  wallet       String
+  campaignId   Int
+  campaign        Campaign  @relation(fields: [campaignId], references: [id])
+  timestamp       DateTime  @default(now()) 
 }
 
 enum VotingStatus {

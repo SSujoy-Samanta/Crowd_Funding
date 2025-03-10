@@ -1,10 +1,13 @@
 import { ethers } from "ethers";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
+import { BiSolidDonateHeart } from "react-icons/bi";
+import { TimeAgo } from "./TimeAgo";
 
 interface Contributors {
   walletAddress: string;
   amount: string;
+  timestamp:Date;
 }
 
 interface ModalProps {
@@ -41,9 +44,19 @@ const ContributorsModal: React.FC<ModalProps> = ({ isOpen, onClose, contributors
           ) : (
             <ul className="space-y-3">
               {contributors.map((contributor, index) => (
-                <li key={index} className="flex justify-between bg-gray-100 p-3 rounded-lg">
-                  <span className="font-mono text-sm text-gray-700">{contributor.walletAddress.slice(0,5)+"..."+contributor.walletAddress.slice(-5)}</span>
-                  <span className="font-semibold text-gray-900">{ethers.formatEther(contributor.amount)} ETH</span>
+                <li key={index} className="flex justify-between items-center bg-gray-100 p-3 rounded-lg">
+                  <div className="flex justify-start items-center gap-2">
+                    <div className="p-2 rounded-full bg-slate-200 flex justify-center items-center w-12 h-12">
+                        <BiSolidDonateHeart size={20} className="text-black"/>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <span className="font-mono text-sm text-gray-700">{contributor.walletAddress.slice(0,5)+"..."+contributor.walletAddress.slice(-5)}</span>
+                      <span className="font-semibold text-gray-900">{ethers.formatEther(contributor.amount)} ETH</span>
+                    </div>
+                  </div>
+                  <div className="text-gray-500 flex justify-end items-center">
+                    <TimeAgo timestamp={contributor.timestamp}/>
+                  </div>
                 </li>
               ))}
             </ul>
