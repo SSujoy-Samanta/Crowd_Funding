@@ -297,7 +297,7 @@ export const ContributionDashboard = () => {
                                     (contribution) =>
                                         contributionData.ongoingVotes > 0 &&
                                         contribution.campaign.votingStatus === "OnGoing" &&
-                                        !contribution.campaign.VotingSuccess
+                                        !contribution.campaign.VotingSuccess && contribution.vote==="pending"
                                 );
 
                                 return votingCampaigns.length > 0 ? (

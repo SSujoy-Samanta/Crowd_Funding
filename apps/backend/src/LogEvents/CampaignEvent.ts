@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import { db } from "../DB/db";
+import { sendEmailEvent } from "../services/KafkaProducer";
 
 //Parse Event Dynamically
 export async function CampaignEvent(log:ethers.Log,parsedLog:ethers.LogDescription){
@@ -33,7 +34,7 @@ export async function CampaignEvent(log:ethers.Log,parsedLog:ethers.LogDescripti
                     }
                 })
                 if(!contributor){
-                    await db.contributor.create({
+                    const Contributor=await db.contributor.create({
                         data:{
                             transactionHash:[log.transactionHash],
                             walletAddress:parsedLog.args[0],
@@ -41,6 +42,7 @@ export async function CampaignEvent(log:ethers.Log,parsedLog:ethers.LogDescripti
                             campaignId:campaign.id
                         }
                     })
+                    await sendEmailEvent(parsedLog.name,"contributor",campaign.id,Contributor.id); 
                 }else{
                     const amount=parseFloat(contributor.amount)===0 ? parsedLog.args[1].toString(): await AddEth(contributor.amount,parsedLog.args[1].toString());
                 
@@ -54,7 +56,9 @@ export async function CampaignEvent(log:ethers.Log,parsedLog:ethers.LogDescripti
                             timestamp:new Date()
                         }
                     })
+                    await sendEmailEvent(parsedLog.name,"contributor",campaign.id,contributor.id); 
                 }
+                
                 
             } else if (parsedLog.name === "Refunded") {
                 const contributor=await db.contributor.findFirst({
@@ -74,6 +78,7 @@ export async function CampaignEvent(log:ethers.Log,parsedLog:ethers.LogDescripti
                             refunded:true
                         }
                     })
+                    await sendEmailEvent(parsedLog.name,"contributor",campaign.id,contributor.id); 
                 }
             } else if (parsedLog.name === "Withdrawn") {
                 await db.campaign.update({
@@ -84,6 +89,7 @@ export async function CampaignEvent(log:ethers.Log,parsedLog:ethers.LogDescripti
                         withdrawn:true
                     }
                 })
+                await sendEmailEvent(parsedLog.name,"campaigner",campaign.id); 
             } else if (parsedLog.name === "Voted") {
                 const contributor=await db.contributor.findFirst({
                     where:{
@@ -101,7 +107,8 @@ export async function CampaignEvent(log:ethers.Log,parsedLog:ethers.LogDescripti
                         data:{
                             vote:parsedLog.args[1]?"yes":"no"
                         }
-                    })
+                    });
+                    await sendEmailEvent(parsedLog.name,"contributor",campaign.id,contributor.id); 
                 }
                 
             } else if (parsedLog.name === "VotingStarted") {
@@ -113,7 +120,7 @@ export async function CampaignEvent(log:ethers.Log,parsedLog:ethers.LogDescripti
                         votingStatus:"OnGoing"
                     }
                 })
-                
+                await sendEmailEvent(parsedLog.name,"campaigner",campaign.id); 
             } else if (parsedLog.name === "VotingEnded") {
                 await db.campaign.update({
                     where:{
@@ -124,6 +131,7 @@ export async function CampaignEvent(log:ethers.Log,parsedLog:ethers.LogDescripti
                         VotingSuccess:parsedLog.args[0]
                     }
                 })
+                await sendEmailEvent(parsedLog.name,"campaigner",campaign.id); 
             }
             console.log("updated database...");
             

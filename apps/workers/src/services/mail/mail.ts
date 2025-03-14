@@ -1,3 +1,4 @@
+require('dotenv').config();
 import nodemailer from 'nodemailer';
 const transport=nodemailer.createTransport({
     service:'gmail',
@@ -9,47 +10,49 @@ const transport=nodemailer.createTransport({
     }
 })
 
-export async function sendEmail(otp: string, To: string, subject: string): Promise<boolean> {
+export async function sendEmail(
+    To: string,
+    subject: string,
+    message: string
+): Promise<boolean> {
     try {
-        const receiver = {
+        const receiver={
             from: process.env.MAIL_ACC,
             to: To,
             subject: subject,
-            text: `Your Verification OTP: ${otp} ; Please don't share with anyone.`,
+            text: message,
             html: `
-            <div style="font-family: 'Helvetica', Arial, sans-serif; background-color: #f4f7fc; padding: 40px; color: #333;">
+            <div style="font-family: 'Arial', sans-serif; background-color: #f4f7fc; padding: 40px; color: #333;">
                 <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);">
+                    
                     <!-- Header Section -->
                     <div style="text-align: center; margin-bottom: 20px;">
-                        <span style="font-size: 32px; font-weight: bold; color:#a12fa3;">
+                        <span style="font-size: 32px; font-weight: bold; color: #a12fa3;">
                             FundRaiser
                         </span>
                     </div>
                     
                     <!-- Main Content -->
-                    <h2 style="color: #2B6CB0; font-size: 22px; font-weight: bold; text-align: center;">Your ${subject} OTP</h2>
+                    <h2 style="color: #2B6CB0; font-size: 22px; font-weight: bold; text-align: center;">${subject}</h2>
+                    
                     <p style="font-size: 16px; color: #333; text-align: center;">Hello,</p>
-                    <p style="font-size: 16px; color: #333; text-align: center;">To complete your registration, please use the OTP below:</p>
+                    <p style="font-size: 16px; color: #333; text-align: center;">${message}</p>
 
-                    <div style="text-align: center; margin: 30px 0; padding: 10px; background-color: #f0f9ff; border-radius: 8px;">
-                        <p style="font-size: 28px; font-weight: bold; color: #D53F8C;">${otp}</p>
-                    </div>
-
+                    <!-- Footer Section -->
                     <p style="font-size: 14px; color: #6B7280; text-align: center; margin-top: 10px;">
-                        For security reasons, please do not share this OTP with anyone. If you did not request this, kindly ignore this email.
+                        If you did not request this, kindly ignore this email.
                     </p>
                     <p style="font-size: 14px; color: #6B7280; text-align: center;">
                         Thank you for choosing FundRaiser.<br>Best regards,<br>Team FundRaiser
                     </p>
 
-                    <!-- Footer Section -->
                     <div style="text-align: center; margin-top: 40px; font-size: 12px; color: #9CA3AF;">
                         <p>&copy; ${new Date().getFullYear()} FundRaiser. All rights reserved.</p>
                     </div>
                 </div>
             </div>
-        `
-        }
+            `
+        };
         await transport.sendMail(receiver, (e, info) => {
             if (e) {
                 console.log(e);
@@ -63,7 +66,6 @@ export async function sendEmail(otp: string, To: string, subject: string): Promi
     } catch (e) {
         console.log('Error occurred:', e);
         throw new Error('Failed to send email');
-        return false;
     }
 }
 

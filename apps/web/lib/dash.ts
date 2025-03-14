@@ -18,8 +18,8 @@ export async function getUserCampaignData(userId: number):Promise<DashboardData>
             return {
                 activeCampaigns: 0,
                 completedCampaigns: 0,
-                totalRaised: "0.0",
-                pendingWithdrawals: "0.0",
+                totalRaised: "0",
+                pendingWithdrawals: "0",
                 campaigns: [],
             };
         }
@@ -29,7 +29,9 @@ export async function getUserCampaignData(userId: number):Promise<DashboardData>
             activeCampaigns: campaigns.filter(c => c.votingStatus!=="Completed").length,
             completedCampaigns: campaigns.filter(c => c.votingStatus === "Completed").length,
             totalRaised: ethers.formatEther(
-                campaigns.reduce((sum, campaign) => sum + BigInt(campaign.raised || "0"), BigInt(0))
+                campaigns
+                .filter(c => c.withdrawn==true)
+                .reduce((sum, campaign) => sum + BigInt(campaign.raised|| "0"), BigInt(0))
             ),
             pendingWithdrawals: ethers.formatEther(
                 campaigns
@@ -53,19 +55,20 @@ export async function getUserCampaignData(userId: number):Promise<DashboardData>
                 category: campaign.metadata?.category || "Uncategorized",
                 withdrawals: {
                     status:campaign.withdrawn?"completed":campaign.votingStatus==='Completed'&& campaign.VotingSuccess?"pending":"Not permitted",
-                    amount:campaign.withdrawn? ethers.formatEther(BigInt(campaign.raised || "0")): "0.0",
+                    amount:campaign.withdrawn? ethers.formatEther(BigInt(campaign.raised || "0")): "0",
                 }
             })),
         };
 
         return transformedData;
     } catch (error) {
+        console.log(error)
         console.error("Error fetching user campaign data:", error);
         return {
             activeCampaigns: 0,
             completedCampaigns: 0,
-            totalRaised: "0.0",
-            pendingWithdrawals: "0.0",
+            totalRaised: "0",
+            pendingWithdrawals: "0",
             campaigns: [],
         };
     }

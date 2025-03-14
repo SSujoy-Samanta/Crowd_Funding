@@ -100,8 +100,8 @@ export const CreateCampaign = ({userId,metadataId}:CreateCampaignProps) => {
                     <Button
                         label={isPending ? "Starting..." : "Start Campaign"}
                         onClick={handleCreateNewContract}
-                        className={`${isPending ? "opacity-50 cursor-not-allowed" : ""} w-56`}
-                        disabled={isPending}
+                        className={`${isPending || isConfirmed ? "opacity-50 cursor-not-allowed" : ""} w-56`}
+                        disabled={isPending || isConfirmed}
                         variant="goldenGlow"
                         size="large"
                     />

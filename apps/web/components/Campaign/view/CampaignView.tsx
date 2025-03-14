@@ -91,14 +91,13 @@ export const FundraiserCard = ({campaign}:{
     const totalContribution = campaign.contributors.length;
     const highestContributor = campaign.contributors.reduce(
         (maxContributor, c) => {
-          const amount = BigInt(c.amount); 
+          const amount = BigInt(c.amount||0); 
           return amount > maxContributor.amount
             ? { user: c.walletAddress, amount } 
             : maxContributor;
         },
         { user: "" as string, amount: BigInt(0) }
     );
-      
       
       
     
@@ -221,7 +220,7 @@ export const FundraiserCard = ({campaign}:{
                 <SocialMedia text={campaign.metadata.title}/>
 
                 <div className="flex justify-center items-center w-full mt-6 px-2">
-                    <Button label="See Doners" onClick={()=>{setIsModalOpen(x=>!x)}} variant="emeraldShine" className="w-full"/>
+                    <Button label="See Doners" onClick={()=>{setIsModalOpen(x=>!x)}} variant="emeraldShine" className="w-full" disabled={campaign.contributors.length===0}/>
                 </div>
                 <ContributorsModal
                     isOpen={isModalOpen}

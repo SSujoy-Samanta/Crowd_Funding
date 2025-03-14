@@ -54,8 +54,8 @@ model Campaign {
   userId          Int
   user            User         @relation(fields: [userId], references: [id], name: "UserCampaigns")
   walletAddress   String?      
-  Goal            String       @default("0.0")
-  raised          String       @default("0.0")
+  Goal            String       @default("0")
+  raised          String       @default("0")
   deployedAddress String?      @unique
   VotingSuccess   Boolean      @default(false)
   withdrawn       Boolean      @default(false)
@@ -74,7 +74,7 @@ model CampaignMetadata {
   title         String    
   description   String
   category      String
-  goal          String    @default("0.0")
+  goal          String    @default("0")
   imageUrl      String?
   tags          String[]  @default([])
   country       String
@@ -89,7 +89,7 @@ model Contributor {
   campaignId      Int
   campaign        Campaign  @relation(fields: [campaignId], references: [id])
   walletAddress   String      
-  amount          String    @default("0.0")
+  amount          String    @default("0")
   transactionHash String[]  @default([])
   email           String?   
   vote            Vote      @default(pending)

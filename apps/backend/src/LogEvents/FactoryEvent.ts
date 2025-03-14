@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import { db } from "../DB/db";
+import { sendEmailEvent } from "../services/KafkaProducer";
 
 export async function FactoryEvent(log: ethers.Log, parsedLog: ethers.LogDescription) {
     try {
@@ -23,8 +24,10 @@ export async function FactoryEvent(log: ethers.Log, parsedLog: ethers.LogDescrip
                         Goal:parsedLog.args[2].toString()
                     }
                 });
+                console.log("✅ Database updated...");      
+                await sendEmailEvent(parsedLog.name,"campaigner",campaign.id) 
             }
-            console.log("✅ Database updated...");
+            
         } else {
             console.log("❌ Error: Campaign not found for update.");
         }

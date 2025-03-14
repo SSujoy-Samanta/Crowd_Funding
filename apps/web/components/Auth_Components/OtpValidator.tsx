@@ -125,7 +125,7 @@ export const OTPPopUP = ({email, otpSent, setOtpSend,setVerified }: OTPInterFace
         setSuccess(true);
         setVerified(true);
         setOtpSend(false);
-        setNotification({ msg: "OTP Verified Successfully", type: "success" });
+        setNotification({ msg: "OTP Verification Successfully", type: "success" });
       } else {
         setNotification({ msg: response.data.msg, type: "error" });
         setError(response.data.msg);

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import {Check,DollarSign,PieChart,Target,Vote,Wallet,Award,TrendingUp,Users,Calendar, Landmark,} from 'lucide-react';
+import {Check,PieChart,Target,Vote,Wallet,Award,TrendingUp,Users,Calendar, Landmark,} from 'lucide-react';
 import { StatCard } from './StatCard';
 import { CampaignCard } from './CampaignCard';
 import { StatusBadge } from './StatusBadge';
@@ -31,9 +31,11 @@ export const CampaignDashboard = ({campaignData}:{
   }, []);
 
   // Calculate voting percentage if active
-  const votingPercentage = selectedCampaign.votingStatus === 'completed' ? 100 : 
-    selectedCampaign.votingStatus === 'ongoing' ? Math.round((selectedCampaign.totalVotes / selectedCampaign.backers) * 100) : 0;
-  
+  const votingPercentage = selectedCampaign?.votingStatus === 'completed' ? 100 :
+  selectedCampaign?.votingStatus === 'ongoing' ? Math.round((selectedCampaign?.totalVotes / selectedCampaign?.backers) * 100) :
+  0;
+
+
   return (
     <div className="min-h-screen bg-none p-6">
       <div className="max-w-6xl mx-auto">
@@ -106,7 +108,7 @@ export const CampaignDashboard = ({campaignData}:{
         </div>
         
         {/* Selected Campaign Details */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        { selectedCampaign && <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Campaign Stats */}
           <div className={`lg:col-span-2 transform transition-all duration-700 ${showContent ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`} style={{ transitionDelay: '600ms' }}>
             <div className="bg-white rounded-xl shadow-xl p-6 mb-8">
@@ -177,7 +179,7 @@ export const CampaignDashboard = ({campaignData}:{
                         `${selectedCampaign.totalVotes} votes cast so far` : 
                         selectedCampaign.votingStatus === 'completed' ? 
                           `Final count: ${selectedCampaign.totalVotes} votes` : 
-                          'Voting will begin once the campaign reaches 30% of its goal'}
+                          'Voting will begin once the campaign reaches 100% of its goal'}
                     </p>
                     
                     {selectedCampaign.votingStatus === 'active' && (
@@ -293,7 +295,7 @@ export const CampaignDashboard = ({campaignData}:{
               </div>
             </GlassmorphicCard>
           </div>
-        </div>
+        </div>}
         {withdraw && <div className='flex justify-center items-center absolute z-20 top-0 left-0 bg-opacity-25 bg-slate-500  w-full h-full'><WithDrawFund setWithdraw={setWithdraw} contractAddress={selectedCampaign.contract}/></div>}
         {chart && <div className='flex justify-center items-center absolute z-20 top-0 left-0 bg-opacity-25 bg-slate-500  w-full h-full text-black'><VerticalVoteBarChart setChart={setChart} total={selectedCampaign.totalVotes}
         yes={selectedCampaign.yesVote} no={selectedCampaign.noVote}/></div>}
