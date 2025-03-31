@@ -5,12 +5,18 @@ import bcrypt from "bcrypt";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import { signInpSchema } from "@repo/common/zod";
+import crypto from "crypto";
 
 interface User {
     id: string;
     email: string;
     name: string;
 }
+
+const generateRandomString = (length: number) => {
+    return crypto.randomBytes(length).toString("hex").slice(0, length);
+};
+
 export const NEXT_AUTH={
     providers:[
         CredentialsProvider({
@@ -96,8 +102,15 @@ export const NEXT_AUTH={
                                 "SECRET_USER_PASS is not defined in the environment variables",
                             );
                         }
+
+                        // Generate a strong random string (12 characters)
+                        const randomString = generateRandomString(12);
+
+                        // Create a strong combined password
+                        const combinedPassword = `${process.env.SECRET_USER_PASS}${randomString}`;
+
                         const hashPassword = await bcrypt.hash(
-                            process.env.SECRET_USER_PASS,
+                            combinedPassword,
                             salt,
                         );
                         
