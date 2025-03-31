@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { CiCreditCard1 } from "react-icons/ci";
 import { IoMail, IoWallet } from "react-icons/io5";
@@ -10,42 +10,18 @@ import { useAccount, useBalance } from "wagmi";
 import { WalletPopUp } from "./WalletPopUp";
 import Button from "./Buttons/buttons";
 import { GoPerson } from "react-icons/go";
+import ChangePasswordForm from "./ChangePassword";
 
-interface UserProfile {
-  username: string;
-  email: string;
-  country: string;
-  year: string;
-  walletAddress: string;
-  balance: number;
-  accountNumber: string;
-}
 
 export const ProfileCard = () => {
-  const [user, setUser] = useState<UserProfile | null>(null);
+  const [edit,setEdit]=useState<boolean>(false);
   const { address, isConnected } = useAccount();
   const {data}=useSession();
   const balance = useBalance({address});
 
-  useEffect(() => {
-    // Mock user data (fetch from backend in a real app)
-    setUser({
-      username: "Sujoy Samanta",
-      email: "sujoy@example.com",
-      country: "India",
-      year: "2025",
-      walletAddress: "0x4B79...2F80",
-      balance: 2.45, // ETH or other currency
-      accountNumber: "1234-5678-9012",
-    });
-  }, []);
-
-  if(!data?.user){
-    return;
-  }
-
-  if (!user) {
-    return <p className="text-center text-gray-500">Loading profile...</p>;
+  //@ts-ignore
+  if(!data?.user && !data?.user?.id){
+    return<p className="text-center text-gray-500">Loading profile...</p>;
   }
 
   return (
@@ -85,21 +61,24 @@ export const ProfileCard = () => {
               <CiCreditCard1 className="text-cyan-500" size={20} />
               <p className="text-white"><span className="font-bold text-teal-500">Balance: </span>{balance.data?.formatted || "0.00"} ETH</p>
             </div>}
-            
-            {/* Account Number */}
-            {/* <div className="flex items-center space-x-3">
-              <CiCreditCard2 className="text-gray-600" size={20} />
-              <p className="text-gray-700">Account No: {user.accountNumber}</p>
-            </div> */}
 
             {/* Buttons */}
             <div className="flex justify-center gap-4 mt-4">
               <WalletPopUp/>
-              <Button label="Edit Profile" onClick={()=>{}} variant="primary"/>
+              <Button label="Edit Profile" onClick={()=>{setEdit(x=>!x)}} variant="primary"/>
             </div>
+            {
+              edit && <div className="absolute top-32 w-2/6 ">
+                {
+                  //@ts-ignore
+                  <ChangePasswordForm setEdit={setEdit} userId={Number(data.user.id)}/>
+                }
+              </div>
+            }
           </div>
         </CardContent>
       </Card>
+      
     </motion.div>
   );
 };
