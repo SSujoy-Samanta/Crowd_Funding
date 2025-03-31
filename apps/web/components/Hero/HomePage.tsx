@@ -56,12 +56,12 @@ const HomePage = () => {
                 
                 
                 {/* Hero Content */}
-                <div className="container mx-auto justify-center items-start flex px-8 relative z-10">
-                    <div className="w-4/6 text-center flex flex-col justify-center items-center pt-6 ">
+                <div className="container mx-auto justify-center items-start flex px-8 relative z-10 w-4/6">
+                    <div className="w-full text-center flex flex-col justify-center items-center pt-6 ">
                         <h1 className={`text-5xl md:text-7xl font-bold text-white mb-6 transition-transform duration-1000 ${isLoaded ? 'translate-y-0' : 'translate-y-10'} text-center`}>
                             Decentralized Crowdfunding on <span className='bg-gradient-to-r from-blue-700 to-indigo-700 shadow-md hover:from-blue-600 hover:to-indigo-700  bg-clip-text text-transparent '>Ethereum</span>
                         </h1>
-                        <p className={`text-xl text-indigo-100 mb-8 transition-transform duration-1000 delay-100 ${isLoaded ? 'translate-y-0' : 'translate-y-10'} w-3/4 text-slate-400`}>
+                        <p className={`text-xl text-indigo-100 mb-8 transition-transform duration-1000 delay-100 ${isLoaded ? 'translate-y-0' : 'translate-y-10'} w-4/6 text-slate-400`}>
                         Create campaigns, contribute ETH, and participate in transparent governance through blockchain voting
                         </p>
                         <div className={`flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 transition-transform duration-1000 delay-200 ${isLoaded ? 'translate-y-0' : 'translate-y-10'}`}>
