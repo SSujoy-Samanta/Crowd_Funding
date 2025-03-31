@@ -85,3 +85,11 @@ export const CommentSchema = z.object({
         .min(2, { message: "Comment must be at least 2 characters long." })
         .max(200, { message: "Comment cannot exceed 200 characters." })
 });
+
+export const changePasswordSchema=z.object({
+    userId: z.number({
+        required_error: "User ID is required", 
+        invalid_type_error: "User ID must be a number"
+    }),
+    password
+})
