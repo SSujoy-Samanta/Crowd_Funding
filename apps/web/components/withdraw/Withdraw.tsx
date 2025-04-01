@@ -5,7 +5,6 @@ import React, { SetStateAction, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, AlertCircle, ArrowDown, Loader2 } from 'lucide-react';
 import { AnimatedLogo } from './AnimatedLogo';
-import { ErrorAnimation } from './ErrorAnimation';
 import { SuccessAnimation } from './SuccessAnimation';
 import { Address, isAddress } from "viem";
 import { RxCrossCircled } from "react-icons/rx";
@@ -20,21 +19,27 @@ interface BlockchainError {
 }
 
 interface WithDrawProps {
-  contractAddress: string,
-  setWithdraw: React.Dispatch<SetStateAction<boolean>>
+  contractAddress: string;
+  setWithdraw: React.Dispatch<SetStateAction<boolean>>;
 }
 
 export const WithDrawFund = ({ contractAddress, setWithdraw }: WithDrawProps) => {
-    const validAddress: Address | null = contractAddress && isAddress(contractAddress) ? (contractAddress as Address) : null;
+    const validAddress: Address | null = isAddress(contractAddress) ? (contractAddress as Address) : null;
 
     const [status, setStatus] = useState<'idle' | 'processing' | 'confirmed' | 'error'>('idle');
-    const { data: hash, isPending, writeContract } = useWriteContract();
+    const { data: hash, isPending, writeContract, error: writeError } = useWriteContract();
     const [error, setError] = useState<BlockchainError | null>(null);
     const [showSuccess, setShowSuccess] = useState(false);
 
     // Function to parse blockchain errors
     const parseBlockchainError = (err: any): BlockchainError => {
-        const errorMessage = err?.message || '';
+        if (!err) return {
+            type: 'unknown',
+            message: 'Transaction failed',
+            details: 'An unknown error occurred.'
+        };
+
+        const errorMessage = err?.shortMessage || err?.message || '';
         const errorCode = err?.code;
         
         // User rejected transaction
@@ -94,71 +99,74 @@ export const WithDrawFund = ({ contractAddress, setWithdraw }: WithDrawProps) =>
         };
     };
 
-    async function handleWithDrawFunds() {
-        try {
-            if (!validAddress) {
-                setError({
-                    type: 'contract-error',
-                    message: 'Invalid Contract Address',
-                    details: 'The provided contract address is not valid.'
-                });
-                setStatus('error');
-                return;
-            }
-            
-            setStatus('processing');
-            setError(null);
+    const handleWithDrawFunds = () => {
+        if (!validAddress) {
+            setError({
+                type: 'contract-error',
+                message: 'Invalid Contract Address',
+                details: 'The provided contract address is not valid.'
+            });
+            setStatus('error');
+            return;
+        }
+        
+        setStatus('processing');
+        setError(null);
 
+        try {
             writeContract({
                 address: validAddress,
                 abi: CrowdFundingABI,
                 functionName: "withdrawFunds",
             });
-            
-        } catch (err: any) {
+        } catch (err) {
             console.error("Transaction error:", err);
             setError(parseBlockchainError(err));
             setStatus('error');
         }
-    }
+    };
 
     const { isLoading: isConfirming, isSuccess: isConfirmed, error: txError } = useWaitForTransactionReceipt({
         hash: hash as `0x${string}` | undefined,
     });
 
-    // Button state variables
-    const isIdle = status === 'idle';
-    const isProcessing = status === 'processing' || isConfirming;
-    const hasError = status === 'error' || !!error;
+    // Handle write contract errors
+    useEffect(() => {
+        if (writeError) {
+            const parsedError = parseBlockchainError(writeError as BaseError);
+            setError(parsedError);
+            setStatus('error');
+        }
+    }, [writeError]);
 
+    // Handle transaction confirmation
     useEffect(() => {
         if (isConfirmed) {
             setShowSuccess(true);
-            setStatus("confirmed");
+            setStatus('confirmed');
         }
     }, [isConfirmed]);
     
+    // Handle transaction errors
     useEffect(() => {
         if (txError) {
             const parsedError = parseBlockchainError(txError);
             setError(parsedError);
-            setStatus("error");
+            setStatus('error');
         }
     }, [txError]);
+
+    // Button state variables
+    const isIdle = status === 'idle';
+    const isProcessing = status === 'processing' || isPending || isConfirming;
+    const hasError = status === 'error' || !!error;
+    const isSuccess = status === 'confirmed';
 
     // Function to get appropriate error icon based on error type
     const getErrorIcon = (errorType: BlockchainErrorType) => {
         switch (errorType) {
             case 'user-rejected':
                 return <RxCrossCircled size={24} />;
-            case 'insufficient-funds':
-                return <AlertCircle size={24} />;
-            case 'gas-limit':
-                return <AlertCircle size={24} />;
-            case 'contract-error':
-                return <AlertCircle size={24} />;
-            case 'network-error':
-                return <AlertCircle size={24} />;
             default:
                 return <AlertCircle size={24} />;
         }
@@ -172,9 +180,15 @@ export const WithDrawFund = ({ contractAddress, setWithdraw }: WithDrawProps) =>
             transition={{ duration: 0.5 }}
             whileHover={{ boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}
         >
-            <div className="flex justify-center items-center p-2 absolute top-2 right-2 cursor-pointer " onClick={()=>{setWithdraw(x=>!x)}}>
+            <motion.div 
+                className="absolute top-2 right-2 cursor-pointer"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setWithdraw(false)}
+            >
                 <RxCrossCircled size={25} color="red"/>
-            </div>
+            </motion.div>
+
             <AnimatedLogo status={status} />
 
             <motion.div
@@ -189,7 +203,7 @@ export const WithDrawFund = ({ contractAddress, setWithdraw }: WithDrawProps) =>
 
             <motion.div
                 initial={{ scale: 0.95 }}
-                animate={{ scale: isConfirmed ? 1.03 : 1 }}
+                animate={{ scale: isSuccess ? 1.03 : 1 }}
                 transition={{ duration: 0.5 }}
             >
                 <motion.button
@@ -199,7 +213,7 @@ export const WithDrawFund = ({ contractAddress, setWithdraw }: WithDrawProps) =>
                         transition-all duration-300 
                         ${isIdle ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md" : 
                         isProcessing ? "bg-blue-100 text-blue-500" :
-                        isConfirmed ? "bg-green-100 text-green-500" : 
+                        isSuccess ? "bg-green-100 text-green-500" : 
                         "bg-red-100 text-red-500"}
                         disabled:opacity-70 flex items-center justify-center gap-2
                     `}
@@ -239,7 +253,7 @@ export const WithDrawFund = ({ contractAddress, setWithdraw }: WithDrawProps) =>
                             </motion.div>
                         )}
 
-                        {isConfirmed && (
+                        {isSuccess && (
                             <motion.div
                                 key="confirmed"
                                 className="flex items-center gap-2"
@@ -317,7 +331,6 @@ export const WithDrawFund = ({ contractAddress, setWithdraw }: WithDrawProps) =>
                             
                             {/* Helpful suggestion based on error type */}
                             {error && (
-                                
                                 <motion.div 
                                     className="mt-3 pt-3 border-t border-red-200 text-sm text-red-600"
                                     initial={{ opacity: 0 }}
@@ -339,15 +352,15 @@ export const WithDrawFund = ({ contractAddress, setWithdraw }: WithDrawProps) =>
                                     {error.type === 'contract-error' && (
                                         <p>This may be due to contract restrictions or requirements not being met.</p>
                                     )}
-                                    {error.type === "unknown" && (
-                                        <p>An unknown error occurred.</p>
+                                    {error.type === 'unknown' && (
+                                        <p>Please try again or contact support if the issue persists.</p>
                                     )}
                                 </motion.div>
                             )}
                         </motion.div>
                     )}
                     
-                    {isConfirmed && <SuccessAnimation />}
+                    {isSuccess && <SuccessAnimation />}
                 </AnimatePresence>
             </motion.div>
         </motion.div>

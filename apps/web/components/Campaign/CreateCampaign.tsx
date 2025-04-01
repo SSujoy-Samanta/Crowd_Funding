@@ -1,6 +1,6 @@
 "use client";
 
-import { BaseError, useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import { type BaseError, useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { parseEther, type Address } from "viem";
 import { CrowdfundingFactoryABI } from "@repo/common/ABI";
 import { useRecoilValue, useSetRecoilState } from "recoil";

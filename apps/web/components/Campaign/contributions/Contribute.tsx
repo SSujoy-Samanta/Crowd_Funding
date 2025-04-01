@@ -1,6 +1,6 @@
 "use client";
 
-import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import { useAccount, useWaitForTransactionReceipt, useWriteContract, type BaseError } from "wagmi";
 import { Address, parseEther } from "viem";
 import { CrowdFundingABI } from "@repo/common/ABI";
 import { SetStateAction, useEffect, useState } from "react";
@@ -21,7 +21,7 @@ interface ContributeFundProps{
 }
 export const ContributeFund = ({ContractAddress,setContribute}:ContributeFundProps) => {
     const {address,isConnected}=useAccount();
-    const { data: hash, writeContract, isPending, isError } = useWriteContract();
+    const { data: hash, writeContract, isPending, isError,error:ERROR } = useWriteContract();
     const [amount, setAmount] = useState<string>("0.000000000");
     const [email, setEmail] = useState<string>("");
     const [error, setError] = useState<string>("");
@@ -149,7 +149,8 @@ export const ContributeFund = ({ContractAddress,setContribute}:ContributeFundPro
                 </button>
                 {isConfirming && <div className="text-sky-500 font-bold">Waiting for confirmation...</div>}
                 {isConfirmed && <div className="text-green-500 font-bold">Contribution Successful.</div>}
-                {isError && <p className="text-red-500 text-sm">⚠️ Transaction failed! Try again.</p>}
+                {/* {isError && <p className="text-red-500 text-sm">⚠️ Transaction failed! Try again.</p>} */}
+                {ERROR && <p className="text-red-500 text-sm">{`⚠️ ${(ERROR as BaseError).shortMessage || ERROR.message}`}</p>}
                
             </div>
             {/* Voting Information Section */}

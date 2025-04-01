@@ -4,7 +4,7 @@ import { CrowdFundingABI } from "@repo/common/ABI";
 import { useState, useEffect, SetStateAction } from "react";
 import { RxCrossCircled } from "react-icons/rx";
 import { Address, isAddress } from "viem";
-import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import { useAccount, useWaitForTransactionReceipt, useWriteContract,type BaseError } from "wagmi";
 
 interface VotingProps{
     contractAddress:string;
@@ -26,7 +26,9 @@ export const Voting = ({contractAddress,setVoting}:VotingProps) => {
     useEffect(() => {
         if (isError && error) {
             console.error("Contract error:", error);
-            setErrorMessage(`Transaction error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            (error as BaseError).shortMessage || error.message
+            //setErrorMessage(`Transaction error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            setErrorMessage(`${(error as BaseError).shortMessage || error.message}`);
         }
     }, [isError, error]);
 
