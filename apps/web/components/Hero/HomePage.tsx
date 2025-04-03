@@ -59,7 +59,7 @@ const HomePage = () => {
                 <div className="container mx-auto justify-center items-start flex px-8 relative z-10 w-4/6">
                     <div className="w-full text-center flex flex-col justify-center items-center pt-6 ">
                         <h1 className={`text-5xl md:text-7xl font-bold text-white mb-6 transition-transform duration-1000 ${isLoaded ? 'translate-y-0' : 'translate-y-10'} text-center`}>
-                            Decentralized Crowdfunding on <span className='bg-gradient-to-r from-blue-700 to-indigo-700 shadow-md hover:from-blue-600 hover:to-indigo-700  bg-clip-text text-transparent '>Ethereum</span>
+                            Decentralized Crowdfunding on <span className='bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800  bg-clip-text text-transparent transition-all duration-300 ease-in-out'>Ethereum</span>
                         </h1>
                         <p className={`text-xl text-indigo-100 mb-8 transition-transform duration-1000 delay-100 ${isLoaded ? 'translate-y-0' : 'translate-y-10'} w-4/6 text-slate-400`}>
                         Create campaigns, contribute ETH, and participate in transparent governance through blockchain voting
@@ -80,7 +80,7 @@ const HomePage = () => {
                 {/* Animated Stats */}
                 <div className={`absolute bottom-8 left-0 right-0 transition-all duration-1000 delay-300 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                     <div className="container mx-auto px-8">
-                        <div className="bg-gradient-to-b from-blue-700/20 via-transparent to-transparent bg-opacity-10 backdrop-blur-lg rounded-xl p-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="bg-gradient-to-b from-blue-700/30 via-transparent to-transparent  backdrop-blur-lg rounded-xl p-6 grid grid-cols-1 md:grid-cols-3 gap-8">
                             <div className="text-center">
                                 <p className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">14K+</p>
                                 <p className="text-indigo-200 mt-2">Active Campaigns</p>
@@ -168,7 +168,7 @@ const HomePage = () => {
             <section className="py-20 px-8 " id="how-it-works">
                 <div className="container mx-auto">
                 <div className="text-center mb-12 flex flex-col justify-center items-center ">
-                    <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-purple-500 to-pink-600  shadow-md  bg-clip-text text-transparent ">How It Works</h2>
+                    <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-purple-500 to-pink-600  bg-clip-text text-transparent ">How It Works</h2>
                     <p className="text-gray-400 max-w-2xl mx-auto">Our transparent, blockchain-powered crowdfunding platform ensures safety and accountability</p>
                 </div>
                 

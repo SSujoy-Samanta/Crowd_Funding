@@ -43,7 +43,7 @@ export const AllCampaigns = ({ campaigns }:Props) => {
     return (
         <section
         id="projects"
-        className=" px-8 text-white"
+        className=" px-8 text-white pb-10"
         >
             <div className="max-w-6xl mx-auto">
                 <div className="flex justify-center items-center gap-1 flex-col">

@@ -17,7 +17,7 @@ interface  CreateCampaignProps{
 }
 export const CreateCampaign = ({userId,metadataId}:CreateCampaignProps) => {
  
-    const { data: hash, error, isPending, writeContract } = useWriteContract();
+    const { data: hash, error, isPending,isSuccess, writeContract } = useWriteContract();
     const { isConnected } = useAccount();
     const setNotification = useSetRecoilState(notificationState);
     const goal=useRecoilValue(goalAmountState);
@@ -100,8 +100,8 @@ export const CreateCampaign = ({userId,metadataId}:CreateCampaignProps) => {
                     <Button
                         label={isPending ? "Starting..." : "Start Campaign"}
                         onClick={handleCreateNewContract}
-                        className={`${isPending || isConfirmed ? "opacity-50 cursor-not-allowed" : ""} w-56`}
-                        disabled={isPending || isConfirmed}
+                        className={`${isPending || isConfirmed || isConfirming? "opacity-50 cursor-not-allowed" : ""} w-56`}
+                        disabled={isPending || isConfirmed || isConfirming}
                         variant="goldenGlow"
                         size="large"
                     />
@@ -113,6 +113,8 @@ export const CreateCampaign = ({userId,metadataId}:CreateCampaignProps) => {
                        
                         {isConfirming && <div className="text-sky-500 font-bold">Waiting for confirmation...</div>}
                         {isConfirmed && <div className="text-green-500 font-bold">Campaign Creation Successful.</div>}
+                        {/* {isPending && <div className="text-sky-500 font-bold">Waiting for confirmation...</div>}
+                        {isSuccess && <div className="text-green-500 font-bold">Campaign Creation Successful.</div>} */}
                         {error && (
                             <div className="text-red-500 font-bold">
                                 Error: {(error as BaseError).shortMessage || error.message}

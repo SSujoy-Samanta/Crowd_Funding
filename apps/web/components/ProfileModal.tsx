@@ -5,6 +5,11 @@ import { useSetRecoilState } from "recoil";
 import { notificationState } from "@/lib/atom";
 import { IoPersonSharp } from "react-icons/io5";
 import { createPortal } from "react-dom";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { RiDashboardLine } from "react-icons/ri";
+import { FiLogOut } from "react-icons/fi";
+
 export const ProfileModal = ({
   setToggle,
   username,
@@ -16,11 +21,27 @@ export const ProfileModal = ({
 }) => {
     const setNotification = useSetRecoilState(notificationState);
     const router = useRouter();
+    const [mounted, setMounted] = useState(false);
+    
+    // Handle ESC key press to close modal
+    useEffect(() => {
+        setMounted(true);
+        const handleEsc = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setToggle(false);
+            }
+        };
+        window.addEventListener('keydown', handleEsc);
+        return () => {
+            window.removeEventListener('keydown', handleEsc);
+        };
+    }, [setToggle]);
+
     const handleClickOutside = (
         event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     ) => {
         event.stopPropagation();
-        setToggle((prev) => !prev);
+        setToggle(false);
     };
 
     const handleClickInside = (
@@ -28,111 +49,112 @@ export const ProfileModal = ({
     ) => {
         event.stopPropagation();
     };
-    const openLinkInNewTab = (url: string) => {
-        window.open(url, "_blank");
-    };
-    return (
-        createPortal(<div
-            id="popup-modal"
-            className="fixed top-0 left-0 right-0 z-50 flex md:inset-0 min-h-screen w-full"
-            onClick={handleClickOutside}
-        >
-            <div
-                className="absolute right-0 sm:p-4 top-24 xxs:pl-12 w-full max-w-md max-h-full"
-                onClick={handleClickInside}
-            >
-                <div
-                className="relative bg-white rounded-lg shadow dark:bg-stone-900 sm:w-5/6 xxs:w-11/12"
-                onClick={handleClickInside}
-                >
-                <div className="p-4 md:p-5  flex flex-col gap-3">
-                    <div className="flex items-center gap-2 border rounded-md border-teal-900 p-2">
-                        <div className="w-10 h-10 rounded-full p-2 bg-cyan-600 text-center">
-                            {username.toUpperCase()[0]}
-                        </div>
-                        <div className="flex flex-col gap-1 justify-start ">
-                            <div>{username}</div>
-                            <div className="xxs:text-xs md:text-sm break-all">{email}</div>
-                        </div>
-                    </div>
-                    <button
-                        type="button"
-                        className="p-2 text-sm font-medium text-white  rounded-lg border border-gray-200 hover:bg-gray-100  focus:z-10 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2"
-                        onClick={() => {
-                            setToggle((x) => !x);
-                            router.push("/profile");
-                        }}
-                    >
-                        <div className="flex gap-2 items-center">
-                            <IoPersonSharp size={20}/>
-                            <p>Profile</p>
-                        </div>
-                    </button>
-                    <div className="flex gap-2 text-sm xxs:flex xxs:flex-col-reverse flex-col-reverse">
-                        <button
-                            onClick={() => {
-                                setToggle((x) => !x);
-                                router.push("/dashboard");
-                            }}
-                            className="transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-r from-blue-500 to-indigo-600 shadow-md hover:from-blue-600 hover:to-indigo-700 focus:ring-blue-400 p-2 text-sm font-medium text-white rounded-lg dark:text-white dark:hover:text-white"
-                        >
-                            <div className="flex gap-2 items-center">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-5 w-5"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                >
-                                    <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M3 3h7v7H3V3zM14 3h7v7h-7V3zM14 14h7v7h-7v-7zM3 14h7v7H3v-7z"
-                                    />
-                                </svg>
-                                <p className="text-white ">Dashboard</p>
-                            </div>
-                        </button>
-                    </div>
 
-                    <button
-                        type="button"
-                        className="text-white bg-red-600 hover:bg-red-800 focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm flex items-center text-center p-2 dark:hover:text-white transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2"
-                        onClick={async () => {
-                            await signOut();
-                            setToggle((x) => !x);
-                            setNotification({
-                                msg: "Loged out.",
-                                type: "success",
-                            });
-                        }}
+    if (!mounted) return null;
+
+    return createPortal(
+        <AnimatePresence>
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 z-50 flex items-start justify-center bg-black/30 backdrop-blur-sm"
+                onClick={handleClickOutside}
+            >
+                <motion.div
+                    initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                    transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 25 }}
+                    className="absolute right-4 top-24 w-full max-w-md p-2 sm:p-4"
+                    onClick={handleClickInside}
+                >
+                    <div 
+                        className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl dark:border-gray-800 dark:bg-gray-900"
                     >
-                        <div className="flex gap-2 items-center">
-                            <div>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="18"
-                                    height="18"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    className="lucide lucide-log-out "
-                                >
-                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                                    <polyline points="16 17 21 12 16 7"></polyline>
-                                    <line x1="21" x2="9" y1="12" y2="12"></line>
-                                </svg>
+                        {/* User Info Section */}
+                        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-white">
+                            <div className="flex items-center gap-4">
+                                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/20 text-2xl font-bold backdrop-blur-sm">
+                                    {username.toUpperCase()[0]}
+                                </div>
+                                <div className="flex flex-col">
+                                    <h3 className="text-xl font-semibold">{username}</h3>
+                                    <p className="text-sm text-blue-100 truncate">{email}</p>
+                                </div>
                             </div>
-                            <p>Logout</p>
                         </div>
-                    </button>
-                </div>
-                </div>
-            </div>
-        </div>,document.body)
+                        
+                        {/* Menu Items */}
+                        <div className="p-4 flex flex-col gap-2">
+                            <motion.button
+                                whileHover={{ scale: 1.02, backgroundColor: "rgba(243, 244, 246, 1)" }}
+                                whileTap={{ scale: 0.98 }}
+                                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                                className="group flex w-full items-center gap-3 rounded-lg p-3 text-left text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:text-gray-800 dark:hover:bg-gray-800"
+                                onClick={() => {
+                                    setToggle(false);
+                                    router.push("/profile");
+                                }}
+                            >
+                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600 group-hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400">
+                                    <IoPersonSharp size={20} />
+                                </div>
+                                <div>
+                                    <p className="font-medium">Profile</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">View and edit your details</p>
+                                </div>
+                            </motion.button>
+                            
+                            <motion.button
+                                whileHover={{ scale: 1.02, backgroundColor: "rgba(243, 244, 246, 1)" }}
+                                whileTap={{ scale: 0.98 }}
+                                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                                className="group flex w-full items-center gap-3 rounded-lg p-3 text-left text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-800"
+                                onClick={() => {
+                                    setToggle(false);
+                                    router.push("/dashboard");
+                                }}
+                            >
+                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-600 group-hover:bg-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-400">
+                                    <RiDashboardLine size={20} />
+                                </div>
+                                <div>
+                                    <p className="font-medium">Dashboard</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">Access your dashboard</p>
+                                </div>
+                            </motion.button>
+                            
+                            <div className="my-2 h-px bg-gray-200 dark:bg-gray-700" />
+                            
+                            <motion.button
+                                whileHover={{ scale: 1.02, backgroundColor: "rgba(254, 226, 226, 1)" }}
+                                whileTap={{ scale: 0.98 }}
+                                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                                className="group flex w-full items-center gap-3 rounded-lg p-3 text-left text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                                onClick={async () => {
+                                    await signOut();
+                                    setToggle(false);
+                                    setNotification({
+                                        msg: "Successfully logged out.",
+                                        type: "success",
+                                    });
+                                }}
+                            >
+                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 text-red-600 group-hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400">
+                                    <FiLogOut size={20} />
+                                </div>
+                                <div>
+                                    <p className="font-medium">Logout</p>
+                                    <p className="text-xs text-red-500/70 dark:text-red-400/70">Sign out of your account</p>
+                                </div>
+                            </motion.button>
+                        </div>
+                    </div>
+                </motion.div>
+            </motion.div>
+        </AnimatePresence>,
+        document.body
     );
 };

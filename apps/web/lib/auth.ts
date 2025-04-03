@@ -61,7 +61,7 @@ export const NEXT_AUTH={
                    
                 } catch (e:any) {
                     console.log("Internal Server error");
-                    console.log(e);
+                    //console.log(e);
                     return null;
                 }
             }

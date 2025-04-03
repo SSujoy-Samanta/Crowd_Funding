@@ -58,7 +58,7 @@ export async function Otp(msg: string, email: string, exist: boolean, userId?: n
         }
 
         // Send OTP via email
-        const success = await sendEmail(otp, email, `Web3FundMe: ${msg}`);
+        const success = await sendEmail(otp, email, `FundRaiser: ${msg}`);
         if (!success) {
             console.error(`Failed to send OTP email to ${email}`);
             return false;

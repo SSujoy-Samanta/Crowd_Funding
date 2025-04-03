@@ -8,6 +8,7 @@ import { cookieToInitialState } from "wagmi";
 import getConfig from "next/config";
 import { headers } from "next/headers";
 import { Footer } from "@/components/Footer";
+import ModernUITheme from "@/components/MoederTheme";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -35,14 +36,16 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} bg-slate-900  text-white`}>
-        <Provider initialState={initialState}>
-          <div className="relative flex min-h-screen flex-col">
-            <AppBar/>
-            <main className="flex-1">{children}</main>
-            <Footer/>
-          </div>
-          <Notification/>
-        </Provider>
+        <ModernUITheme>
+          <Provider initialState={initialState}>
+            <div className="relative flex min-h-screen flex-col">
+              <AppBar/>
+              <main className="flex-1">{children}</main>
+              <Footer/>
+            </div>
+            <Notification/>
+          </Provider>
+        </ModernUITheme>
       </body>
     </html>
   );
