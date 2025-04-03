@@ -21,7 +21,7 @@ export const D = ({userId,metadataId,step,setStep}:DProps) => {
         <motion.div 
             initial={{ opacity: 0, y: 20 }} 
             animate={{ opacity: 1, y: 0 }} 
-            className="flex flex-col relative justify-center rounded-md  bg-gradient-to-r from-blue-500 to-purple-600  w-full"
+            className="flex flex-col relative justify-center"
         >
             <Card className="w-full border-none shadow-none text-black mb-5">
                 <CardContent className="p-6 flex gap-10 justify-between items-center w-full">

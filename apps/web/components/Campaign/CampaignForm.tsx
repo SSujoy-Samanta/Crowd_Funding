@@ -25,7 +25,7 @@ export function CampaignForm() {
 
     return (
         <div className="w-full pt-5 flex justify-center flex-col items-center">
-            <div className="relative flex justify-center flex-col items-center rounded-md w-10/12">
+            <div className="relative flex justify-center flex-col items-center rounded-md w-10/12 mt-24 p-1 mb-5">
                 {step === 1 && (
                     <>
                         <A userId={userId} setStep={setStep} step={step} metadataId={metadataId} setMetadataId={setMetadataId}/>
