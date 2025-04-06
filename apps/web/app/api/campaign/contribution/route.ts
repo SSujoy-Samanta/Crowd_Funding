@@ -18,6 +18,8 @@ interface Contribution {
     };
 }
 
+export const dynamic = 'force-dynamic'; // Tell Next.js this route must be dynamic
+
 export async function GET(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.url);

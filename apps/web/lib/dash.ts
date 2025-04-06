@@ -6,7 +6,7 @@ import { DashboardData,Contributor, CampaignMetadata,CAMPAIGN } from "@/utils/da
 export interface CampaignWithRelations extends CAMPAIGN  {
     metadata: CampaignMetadata;
     contributors: Contributor[];
-  }
+}
   
 
 export async function getUserCampaignData(userId: number): Promise<DashboardData> {
