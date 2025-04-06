@@ -1,13 +1,13 @@
 import { ethers } from "ethers";
 import db from "@repo/db/db";
-import { DashboardData } from "@/utils/dashboard";
-import { Campaign, Contributor, CampaignMetadata } from "@prisma/client";
+import { DashboardData,Contributor, CampaignMetadata,CAMPAIGN } from "@/utils/dashboard";
 
 // Define type with relations from Prisma
-type CampaignWithRelations = Campaign & {
-  metadata: CampaignMetadata | null;
-  contributors: Contributor[];
-};
+export interface CampaignWithRelations extends CAMPAIGN  {
+    metadata: CampaignMetadata;
+    contributors: Contributor[];
+  }
+  
 
 export async function getUserCampaignData(userId: number): Promise<DashboardData> {
     try {
