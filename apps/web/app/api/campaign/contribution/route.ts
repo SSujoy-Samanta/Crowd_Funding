@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
         }
 
         // Calculate total amount contributed and number of contributions
-        const totalAmount = contributions.reduce((sum, contribution) => sum + BigInt(contribution.amount), BigInt(0));
+        const totalAmount = contributions.reduce((sum:bigint, contribution) => sum + BigInt(contribution.amount), BigInt(0));
         const totalContributions = contributions.length;
 
         // Count votes in different states
