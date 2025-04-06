@@ -1,6 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import db from "@repo/db/db";
 
+interface Contribution {
+    amount: string;
+    campaignId: number;
+    vote: string;
+    refunded: boolean;
+    timestamp: Date;
+    campaign: {
+        metadata: {
+            title: string;
+        };
+        withdrawn: boolean;
+        votingStatus: string;
+        deployedAddress: string | null; // <- updated here
+        VotingSuccess: boolean;
+    };
+}
 
 export async function GET(req: NextRequest) {
     try {
@@ -15,7 +31,7 @@ export async function GET(req: NextRequest) {
         }
 
         // Fetch all contributions for the given walletAddress
-        const contributions = await db.contributor.findMany({
+        const contributions: Contribution[] = await db.contributor.findMany({
             where: {
                 walletAddress,
             },
@@ -25,36 +41,44 @@ export async function GET(req: NextRequest) {
                         metadata: {
                             select: {
                                 title: true,
-                            }
+                            },
                         },
                         votingStatus: true,
                         withdrawn: true,
-                        deployedAddress:true,
-                        VotingSuccess:true
-                    }
+                        deployedAddress: true,
+                        VotingSuccess: true,
+                    },
                 },
                 campaignId: true,
                 amount: true,
                 vote: true,
                 refunded: true,
                 timestamp: true,
-                
-            }
+            },
         });
 
-        // If no contributions found, return a message
         if (contributions.length === 0) {
             return NextResponse.json({ msg: "You haven't contributed yet." }, { status: 404 });
         }
 
-        // Calculate total amount contributed and number of contributions
-        const totalAmount = contributions.reduce((sum:bigint, contribution: { amount: string }) => sum + BigInt(contribution.amount), BigInt(0));
+        // Correct typings here 👇
+        const totalAmount = contributions.reduce(
+            (sum: bigint, contribution: Contribution) => sum + BigInt(contribution.amount),
+            BigInt(0)
+        );
         const totalContributions = contributions.length;
 
-        // Count votes in different states
-        const ongoingVotes = contributions.filter(contribution => contribution.campaign.votingStatus === "OnGoing").length;
-        const pendingVotes = contributions.filter(contribution => contribution.campaign.votingStatus === "Pending").length;
-        const refundedCampaigns = contributions.filter(contribution => contribution.refunded === true).length;
+        const ongoingVotes = contributions.filter((contribution: Contribution) =>
+            contribution.campaign.votingStatus === "OnGoing"
+        ).length;
+
+        const pendingVotes = contributions.filter((contribution: Contribution) =>
+            contribution.campaign.votingStatus === "Pending"
+        ).length;
+
+        const refundedCampaigns = contributions.filter((contribution: Contribution) =>
+            contribution.refunded === true
+        ).length;
 
         const responseObject = {
             totalAmount: totalAmount.toString(),
@@ -62,7 +86,7 @@ export async function GET(req: NextRequest) {
             ongoingVotes,
             pendingVotes,
             refundedCampaigns,
-            contributions
+            contributions,
         };
 
         return NextResponse.json(responseObject, { status: 200 });
