@@ -49,7 +49,7 @@ const CauseCircle: React.FC<CauseCircleProps> = ({ imageSrc, label, position = '
         }}
       >
         {/* Inner circle with image */}
-        <div className="relative w-32 h-32 md:w-40 md:h-40 overflow-hidden rounded-full border-4 border-white">
+        <div className="relative w-32 h-32 md:w-36 md:h-36 overflow-hidden rounded-full border-4 border-white">
           <motion.img 
             src={imageSrc} 
             alt={label} 
@@ -113,7 +113,7 @@ const CauseCircles: React.FC = () => {
   ];
 
   return (
-    <div className="flex items-start justify-center min-h-screen w-full pt-28">
+    <div className="flex items-start justify-center min-h-screen w-full pt-24">
         <motion.div 
             className="relative w-5/6 mx-auto h-full md:h-[32rem]"
             initial={{ opacity: 0 }}

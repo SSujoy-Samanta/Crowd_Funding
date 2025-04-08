@@ -8,7 +8,11 @@ import { VotedEvent } from "./services/events/voted";
 import { VotingStartedEvent } from "./services/events/votingStarted";
 import { VotingEndedEvent } from "./services/events/votingEnded";
 
-
+if (!process.env.KAFKA_BROKER) {
+    console.error("KAFKA_BROKER is not defined in environment variables.");
+    process.exit(1);
+}
+  
 // const TOPIC_NAME="zap-queue";
 const kafka = new Kafka({
     clientId: "crowdfunding-app",
@@ -17,13 +21,14 @@ const kafka = new Kafka({
 
 const main = async () => {
     try {
+        console.log("workers.....");
         const consumer = kafka.consumer({ groupId: 'worker-main' });
         await consumer.connect();
         await consumer.subscribe({ topic: "email-events", fromBeginning: true });
 
         await consumer.run({
             autoCommit: false,
-            eachMessage: async ({ partition, message }) => {
+            eachMessage: async ({ partition, message }: { partition: number, message: any }) => {
                 console.log({
                     partition,
                     offset: message.offset,

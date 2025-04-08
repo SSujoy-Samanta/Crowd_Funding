@@ -6,7 +6,10 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "prisma:generate": "cd packages/db && npx prisma generate"
+    "db:generate": "cd packages/db && npx prisma generate && cd ../..",
+    "start-web-app": "cd ./apps/web && npm run start",
+    "start-backend-app": "cd ./apps/backend && npm run start",
+    "start-workers-app": "cd ./apps/workers && npm run start"
   },
   "devDependencies": {
     "prettier": "^3.5.0",
@@ -29,5 +32,8 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@types/dotenv": "^6.1.1"
+  }
 }

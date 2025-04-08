@@ -1,0 +1,36 @@
+FROM node:latest
+
+# Define build argument with default value
+ARG APP_NAME=web
+
+WORKDIR /app
+
+# Copy package files first for better caching
+COPY package.json package-lock.json turbo.json ./
+COPY apps/${APP_NAME}/package.json ./apps/${APP_NAME}/
+COPY packages/db/package.json ./packages/db/
+COPY packages/common/package.json ./packages/common/
+
+# Install dependencies (consider using --include-workspace-root for selective installs)
+RUN npm install
+
+# Copy only the packages directory (always needed)
+COPY packages ./packages
+
+# Copy only the specific app directory
+COPY apps/${APP_NAME} ./apps/${APP_NAME}
+
+# Generate Prisma client with a placeholder URL
+RUN npm run db:generate
+
+# Build the specific app using Turbo
+RUN npx turbo run build --filter=@repo/${APP_NAME}
+
+EXPOSE 5000
+
+# Create app-specific startup script
+RUN echo '#!/bin/sh\ncd /app/packages/db && npx prisma generate\ncd /app && npm run start:${APP_NAME}' > /app/start.sh
+RUN chmod +x /app/start.sh
+
+# Use the startup script as the entrypoint
+CMD ["/app/start.sh"]

@@ -89,6 +89,7 @@ export const WalletPopUp = () => {
                     label={isConnected? `Disconnect` : "Connect Wallet"} 
                     variant={isConnected ? "sunsetGlow" : "aquaBreeze"}  
                     onClick={isConnected ? handleDisconnect : handleConnect}
+                    className="px-16 md:px-4"
                 />
             </motion.div>
     

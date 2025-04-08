@@ -1,0 +1,82 @@
+version: '3'
+
+services:
+  web-app:
+    image: sujoysamanta/fundraiser-web:latest
+    env_file:
+      - ./web/.env
+    ports:
+      - "3001:3001"
+    networks:
+      - frontend-network
+      - backend-network
+
+  backend-app:
+    image: sujoysamanta/fundraiser-backend:latest
+    env_file:
+      - ./backend/.env
+    expose:
+      - "8080"
+    networks:
+      - backend-network
+    depends_on:
+      - kafka
+
+  workers-app:
+    image: sujoysamanta/fundraiser-workers:latest
+    env_file:
+      - ./workers/.env
+    networks:
+      - backend-network
+    depends_on:
+      - kafka
+      - backend-app
+    restart: unless-stopped   # Ensure worker restarts if it crashes
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - backend-network
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend-network
+
+  kafka-setup:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - kafka
+    networks:
+      - backend-network
+    command: >
+      bash -c "
+        echo -e 'Waiting for Kafka to be ready...' &&
+        cub kafka-ready -b kafka:9092 1 30 &&
+        echo -e 'Creating Kafka topics...' &&
+        kafka-topics --create --if-not-exists --bootstrap-server kafka:9092 --partitions 3 --replication-factor 1 --topic email-events &&
+        echo -e 'Successfully created the following topics:' &&
+        kafka-topics --list --bootstrap-server kafka:9092
+      "
+
+networks:
+  frontend-network:
+  backend-network:

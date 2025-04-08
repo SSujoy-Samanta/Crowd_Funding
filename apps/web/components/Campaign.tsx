@@ -45,11 +45,11 @@ export const AllCampaigns = ({ campaigns }:Props) => {
         id="projects"
         className=" px-8 text-white pb-10"
         >
-            <div className="max-w-6xl mx-auto">
+            <div className="max-w-6xl mx-auto text-center">
                 <div className="flex justify-center items-center gap-1 flex-col">
                     <p className="text-xl text-white font-bold">Browse All Campaigns</p>
                     <p className="font-bold text-slate-500">Find fundraisers by person's name, country, tag or title.</p>
-                    <div className="p-8 w-4/6 flex justify-center items-center">
+                    <div className="md:p-8 w-full md:w-4/6 flex justify-center items-center m-1">
                         <SearchBox campaigns={campaigns} setData={setData}/>
                     </div>
                 </div>

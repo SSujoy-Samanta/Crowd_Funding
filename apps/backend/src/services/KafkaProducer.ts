@@ -1,7 +1,7 @@
 import { Kafka } from "kafkajs";
-import dotenv from "dotenv";
+import { config } from 'dotenv';
 
-dotenv.config(); 
+config(); 
 
 const kafka = new Kafka({
     clientId: "crowdfunding-app",

@@ -92,7 +92,7 @@ async function pollNewBlocks() {
     }
 }
 
-// Poll every 5 seconds
+// Poll every 8 seconds
 setInterval(pollNewBlocks, 8000);
 
 app.listen(process.env.PORT || 5000, () => {

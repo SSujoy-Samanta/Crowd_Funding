@@ -1,13 +1,12 @@
 {
-  "name": "web",
+  "name": "@repo/web",
   "version": "0.1.0",
   "type": "module",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prisma:generate": "cd ../../packages/db && npx prisma generate",
-    "build": "npm run prisma:generate && next build",
-    "start": "next start",
+    "build": "next build",
+    "start": "next start -p 3001",
     "lint": "next lint --max-warnings 0",
     "check-types": "tsc --noEmit"
   },

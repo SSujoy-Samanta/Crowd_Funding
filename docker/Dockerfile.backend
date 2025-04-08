@@ -1,0 +1,34 @@
+FROM node:latest
+
+WORKDIR /app
+
+# Copy package files first for better caching
+COPY package.json package-lock.json turbo.json ./
+COPY apps/backend/package.json ./apps/backend/
+COPY apps/workers/package.json ./apps/workers/
+COPY apps/web/package.json ./apps/web/
+COPY packages/db/package.json ./packages/db/
+COPY packages/common/package.json ./packages/common/
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the code
+COPY apps ./apps
+COPY packages ./packages
+
+# Generate Prisma client with a placeholder URL
+# This generates the Prisma client code but doesn't need a real connection
+RUN npm run db:generate
+
+# Build the application
+RUN npm run build
+
+EXPOSE 5000
+
+# Create a startup script to regenerate prisma client at runtime if needed
+RUN echo '#!/bin/sh\ncd /app/packages/db && npx prisma generate\ncd /app && npm run start-backend-app' > /app/start.sh
+RUN chmod +x /app/start.sh
+
+# Use the startup script as the entrypoint
+CMD ["/app/start.sh"]

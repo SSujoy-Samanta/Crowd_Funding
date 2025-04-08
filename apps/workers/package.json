@@ -14,10 +14,15 @@
   "dependencies": {
     "@repo/common": "*",
     "@repo/db": "*",
+    "@types/dotenv": "^6.1.1",
     "dotenv": "^16.4.7",
     "ethers": "^6.13.5",
     "kafkajs": "^2.2.4",
     "nodemailer": "^6.10.0",
     "typescript": "^5.7.3"
+  },
+  "devDependencies": {
+    "@types/kafkajs": "^1.8.2",
+    "@types/node": "^22.14.0"
   }
 }

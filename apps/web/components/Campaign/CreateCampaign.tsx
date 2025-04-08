@@ -193,29 +193,6 @@ export const CreateCampaign = ({ userId, metadataId }: CreateCampaignProps) => {
                     </div>
                     <div className="ml-3">
                       <p className="text-sm text-red-700">{errorMessage}</p>
-                      {error && (
-                        <div className="mt-2">
-                          <button 
-                            onClick={() => setShowErrorDetails(!showErrorDetails)}
-                            className="text-xs text-red-600 underline hover:text-red-800"
-                          >
-                            {showErrorDetails ? "Hide details" : "Show details"}
-                          </button>
-                          
-                          <AnimatePresence>
-                            {showErrorDetails && (
-                              <motion.pre
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: "auto", opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                className="mt-2 text-xs bg-red-100 p-2 rounded overflow-x-auto"
-                              >
-                                {JSON.stringify(error, null, 2)}
-                              </motion.pre>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>

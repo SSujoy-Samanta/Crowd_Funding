@@ -39,13 +39,14 @@ export const AuthButtons = () => {
           </div>
         </div>
       ) : (
-        <div className="flex justify-evenly items-center gap-2">
+        <div className="flex justify-evenly items-center flex-col md:flex-row gap-2">
             <Button
                 label="Sign up"
                 variant="purpleHaze"
                 onClick={() => {
                     router.push("/signup");
                 }}
+                className="px-24 md:px-4"
             />
             <Button
                 label="Log in"
@@ -53,6 +54,7 @@ export const AuthButtons = () => {
                 onClick={() => {
                     router.push("/signin");
                 }}
+                className="px-24 md:px-4"
             />
         </div>
       )}
